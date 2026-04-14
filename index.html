@@ -558,10 +558,8 @@ let impiantiCache = [];
 
 // ── API ──────────────────────────────────────────────────
 async function api(action, body = {}) {
-  const res = await fetch(API, {
-    method: 'POST',
-    body: JSON.stringify({ action, ...body }),
-  });
+  const params = new URLSearchParams({ action, ...body });
+  const res = await fetch(`${API}?${params.toString()}`);
   return res.json();
 }
 
