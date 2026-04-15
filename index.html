@@ -141,6 +141,16 @@
   .tab-btn { padding: 7px 14px; border-radius: 99px; border: 1px solid var(--border); background: var(--surface); font-size: 14px; cursor: pointer; color: var(--muted); transition: all .15s; }
   .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
+  /* ── Calendario superuser commesse ── */
+  .commessa-filtri { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .commessa-btn {
+    padding: 5px 14px; border-radius: 99px; border: 2px solid transparent;
+    font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity .15s;
+    opacity: .45;
+  }
+  .commessa-btn.active { opacity: 1; }
+  .commessa-btn.tutte { background: #f1efe8; color: #444; border-color: #ccc; }
+
   @media (max-width: 600px) {
     .cal-cell { min-height: 56px; }
     .cal-event { font-size: 9px; }
@@ -269,13 +279,27 @@
     </div>
   </header>
   <nav>
-    <button class="nav-btn active" onclick="showSection('app-superuser','super-richieste',this); caricaTutteRichieste()">Richieste</button>
+    <button class="nav-btn active" onclick="showSection('app-superuser','super-calendario',this); disegnaCalendarioSuper()">Calendario</button>
+    <button class="nav-btn" onclick="showSection('app-superuser','super-richieste',this); caricaTutteRichieste()">Richieste</button>
     <button class="nav-btn" onclick="showSection('app-superuser','super-utenti',this); caricaUtenti()">Utenti</button>
     <button class="nav-btn" onclick="showSection('app-superuser','super-commesse',this); caricaCommesse()">Commesse</button>
     <button class="nav-btn" onclick="showSection('app-superuser','super-impianti',this); caricaImpianti()">Impianti</button>
   </nav>
   <main class="narrow">
-    <div id="super-richieste" class="section active">
+    <!-- Calendario superuser -->
+    <div id="super-calendario" class="section active">
+      <div class="cal-wrap">
+        <div class="cal-nav">
+          <button onclick="cambioMeseSuper(-1)">&#8592;</button>
+          <h3 id="cal-super-titolo"></h3>
+          <button onclick="cambioMeseSuper(1)">&#8594;</button>
+        </div>
+        <div class="commessa-filtri" id="commessa-filtri"></div>
+        <div class="cal-grid" id="cal-super-grid"></div>
+        <div class="cal-legenda" id="cal-super-legenda" style="margin-top:12px"></div>
+      </div>
+    </div>
+    <div id="super-richieste" class="section">
       <div class="tab-btns">
         <button class="tab-btn active" onclick="filtraRichieste('TUTTE',this)">Tutte</button>
         <button class="tab-btn" onclick="filtraRichieste('IN_ATTESA',this)">In attesa</button>
@@ -518,7 +542,7 @@ async function avviaApp() {
     document.getElementById('s-nome').textContent = user.nome;
     document.getElementById('app-superuser').classList.add('active');
     document.getElementById('app-superuser').style.display = 'flex';
-    caricaTutteRichieste();
+    disegnaCalendarioSuper();
   }
 }
 
@@ -944,6 +968,177 @@ function chiudiModal(id) { document.getElementById(id).classList.remove('open');
 
 function labelStato(s) {
   return { IN_ATTESA:'In attesa', APPROVATA:'Approvata', MODIFICATA:'Approvata', RIFIUTATA:'Rifiutata' }[s] || s;
+}
+
+// ── SUPERUSER — CALENDARIO ────────────────────────────────────
+
+const COMMESSE_COLORI = {
+  'PESARO':    { bg: '#dce8f8', border: '#1a5fb4', text: '#0c447c' },
+  'MISANO':    { bg: '#e8f5e9', border: '#2e7d32', text: '#1b5e20' },
+  'GABICCE':   { bg: '#fff3e0', border: '#e65100', text: '#bf360c' },
+  'VERUCCHIO': { bg: '#f3e5f5', border: '#6a1b9a', text: '#4a148c' },
+  'CORINALDO': { bg: '#fee2e2', border: '#b91c1c', text: '#7f1d1d' },
+};
+
+// Mappa flessibile: cerca la commessa_id che contiene il nome
+function coloreCommessa(commessa_id) {
+  const id = String(commessa_id || '').toUpperCase();
+  for (const [nome, colore] of Object.entries(COMMESSE_COLORI)) {
+    if (id.includes(nome)) return colore;
+  }
+  return { bg: '#f1efe8', border: '#888', text: '#444' };
+}
+
+let calSuperMese         = new Date().getMonth();
+let calSuperAnno         = new Date().getFullYear();
+let calSuperFiltro       = 'TUTTE';
+let richiesteApprSuper   = [];
+
+async function caricaRichiesteApprSuper() {
+  if (richiesteApprSuper.length) return;
+  const r = await api('getAllRichieste');
+  richiesteApprSuper = r.ok ? r.richieste.filter(x => x.stato === 'APPROVATA' || x.stato === 'MODIFICATA') : [];
+}
+
+async function disegnaCalendarioSuper() {
+  await caricaRichiesteApprSuper();
+  costruisciFiltriCommessa();
+  renderCalSuper();
+}
+
+function costruisciFiltriCommessa() {
+  const el = document.getElementById('commessa-filtri');
+  if (el.children.length) return; // già costruiti
+
+  const btn0 = document.createElement('button');
+  btn0.className = 'commessa-btn tutte active';
+  btn0.textContent = 'Tutte';
+  btn0.onclick = () => { calSuperFiltro = 'TUTTE'; document.querySelectorAll('.commessa-btn').forEach(b => b.classList.remove('active')); btn0.classList.add('active'); renderCalSuper(); };
+  el.appendChild(btn0);
+
+  Object.entries(COMMESSE_COLORI).forEach(([nome, c]) => {
+    const btn = document.createElement('button');
+    btn.className = 'commessa-btn';
+    btn.textContent = nome.charAt(0) + nome.slice(1).toLowerCase();
+    btn.style.background = c.bg;
+    btn.style.borderColor = c.border;
+    btn.style.color = c.text;
+    btn.onclick = () => {
+      calSuperFiltro = nome;
+      document.querySelectorAll('.commessa-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderCalSuper();
+    };
+    el.appendChild(btn);
+  });
+}
+
+function cambioMeseSuper(delta) {
+  calSuperMese += delta;
+  if (calSuperMese > 11) { calSuperMese = 0; calSuperAnno++; }
+  if (calSuperMese < 0)  { calSuperMese = 11; calSuperAnno--; }
+  renderCalSuper();
+}
+
+function renderCalSuper() {
+  const mesi = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+  document.getElementById('cal-super-titolo').textContent = `${mesi[calSuperMese]} ${calSuperAnno}`;
+
+  const grid = document.getElementById('cal-super-grid');
+  grid.innerHTML = '';
+
+  ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'].forEach(g => {
+    const el = document.createElement('div');
+    el.className = 'cal-day-name';
+    el.textContent = g;
+    grid.appendChild(el);
+  });
+
+  const primoGiorno = new Date(calSuperAnno, calSuperMese, 1);
+  const oggi        = new Date();
+  let dow = primoGiorno.getDay();
+  dow = dow === 0 ? 6 : dow - 1;
+  const inizioGriglia = new Date(primoGiorno);
+  inizioGriglia.setDate(inizioGriglia.getDate() - dow);
+
+  // Filtra richieste
+  const lista = calSuperFiltro === 'TUTTE'
+    ? richiesteApprSuper
+    : richiesteApprSuper.filter(r => String(r.commessa_id || '').toUpperCase().includes(calSuperFiltro));
+
+  const richiesteMap = {};
+  lista.forEach(ric => {
+    const k = normalizzaData(ric.data_accensione);
+    if (!richiesteMap[k]) richiesteMap[k] = [];
+    richiesteMap[k].push(ric);
+  });
+
+  for (let i = 0; i < 42; i++) {
+    const d = new Date(inizioGriglia);
+    d.setDate(d.getDate() + i);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const altroMese = d.getMonth() !== calSuperMese;
+    const isOggi    = d.toDateString() === oggi.toDateString();
+
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell' + (altroMese ? ' altro-mese' : '') + (isOggi ? ' oggi' : '');
+    cell.style.cursor = 'default';
+
+    const num = document.createElement('div');
+    num.className = 'cal-num';
+    num.textContent = d.getDate();
+    cell.appendChild(num);
+
+    if (richiesteMap[key] && !altroMese) {
+      richiesteMap[key].forEach(ric => {
+        const c  = coloreCommessa(ric.commessa_id);
+        const ev = document.createElement('div');
+        ev.className = 'cal-event';
+        ev.style.background  = c.bg;
+        ev.style.borderLeft  = `3px solid ${c.border}`;
+        ev.style.color       = c.text;
+        ev.style.borderRadius = '0 4px 4px 0';
+        ev.textContent = ric.impianto_nome.substring(0, 13) + (ric.impianto_nome.length > 13 ? '…' : '');
+        ev.title = `${ric.impianto_nome} · ${ric.ora_inizio}–${ric.ora_fine} · ${ric.commessa_id}`;
+        ev.onclick = (e) => { e.stopPropagation(); mostraEventoSuperModal(ric); };
+        cell.appendChild(ev);
+      });
+    }
+
+    grid.appendChild(cell);
+  }
+
+  // Legenda commesse presenti nel mese
+  const legEl = document.getElementById('cal-super-legenda');
+  legEl.innerHTML = '';
+  const commessePresenti = new Set(lista.filter(r => {
+    const k = normalizzaData(r.data_accensione);
+    const [y,m] = k.split('-');
+    return parseInt(m)-1 === calSuperMese && parseInt(y) === calSuperAnno;
+  }).map(r => r.commessa_id));
+
+  commessePresenti.forEach(cid => {
+    const c   = coloreCommessa(cid);
+    const div = document.createElement('div');
+    div.className = 'cal-legenda-item';
+    div.innerHTML = `<div class="cal-legenda-dot" style="background:${c.bg};border:2px solid ${c.border}"></div><span style="color:${c.text};font-weight:600">${cid}</span>`;
+    legEl.appendChild(div);
+  });
+}
+
+function mostraEventoSuperModal(ric) {
+  document.getElementById('ev-titolo').textContent = ric.impianto_nome;
+  const c = coloreCommessa(ric.commessa_id);
+  document.getElementById('ev-body').innerHTML = `
+    <div style="display:inline-block;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600;background:${c.bg};color:${c.text};border:1px solid ${c.border};margin-bottom:10px">${ric.commessa_id}</div>
+    <div style="font-family:monospace;font-size:12px;color:var(--muted);margin-bottom:8px">${ric.impianto_id}</div>
+    <div><strong>Data:</strong> ${ric.data_accensione}</div>
+    <div><strong>Orario:</strong> ${ric.ora_inizio} – ${ric.ora_fine}</div>
+    ${ric.motivo ? `<div><strong>Motivo:</strong> ${ric.motivo}</div>` : ''}
+    ${ric.note_coord ? `<div style="color:var(--amber);margin-top:6px"><strong>Note coord.:</strong> ${ric.note_coord}</div>` : ''}
+    <div style="margin-top:6px;color:var(--muted);font-size:12px">Richiedente: ${ric.utente} · Coord.: ${ric.coordinatore||'—'}</div>
+  `;
+  document.getElementById('modal-evento').classList.add('open');
 }
 
 let toastTimer;
