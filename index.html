@@ -25,34 +25,14 @@
     --shadow:  0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
   }
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    font-size: 15px;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.6; min-height: 100vh; }
 
   .app { display: none; flex-direction: column; min-height: 100vh; }
   .app.active { display: flex; }
 
-  header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 16px;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 16px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
   .logo { font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 8px; }
   .logo svg { width: 20px; height: 20px; color: var(--accent); }
-
   .user-chip { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
   .badge-role { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px; text-transform: uppercase; letter-spacing: .4px; }
   .role-utente       { background: var(--accent-l); color: var(--accent); }
@@ -63,7 +43,12 @@
   .nav-btn { flex: none; padding: 12px 20px; font-size: 14px; border: none; background: none; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; white-space: nowrap; transition: color .15s, border-color .15s; }
   .nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
 
-  main { flex: 1; padding: 16px; max-width: 800px; width: 100%; margin: 0 auto; }
+  /* nav utente ha bottone nuova richiesta a destra */
+  .nav-utente { display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--border); padding-right: 12px; }
+  .nav-utente-tabs { display: flex; overflow-x: auto; }
+
+  main { flex: 1; padding: 16px; max-width: 100%; width: 100%; margin: 0 auto; }
+  main.narrow { max-width: 800px; }
 
   .section { display: none; }
   .section.active { display: block; }
@@ -78,7 +63,6 @@
   .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
   .field textarea { min-height: 80px; resize: vertical; }
   .field-note { font-size: 12px; color: var(--muted); margin-top: 4px; }
-
   .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 18px; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; font-family: inherit; cursor: pointer; transition: opacity .15s; }
@@ -121,31 +105,46 @@
   /* ── Modal ── */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 100; display: none; align-items: flex-end; justify-content: center; padding-bottom: env(safe-area-inset-bottom); }
   .modal-overlay.open { display: flex; }
-  .modal { background: var(--surface); border-radius: 20px 20px 0 0; padding: 20px 20px 32px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+  .modal { background: var(--surface); border-radius: 20px 20px 0 0; padding: 20px 20px 32px; width: 100%; max-width: 520px; max-height: 92vh; overflow-y: auto; }
   .modal h3 { font-size: 17px; font-weight: 600; margin-bottom: 16px; }
   .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
   .modal-actions .btn { flex: 1; }
 
-  /* ── Calendario ── */
-  .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-  .cal-nav h3 { font-size: 15px; font-weight: 600; }
-  .cal-nav button { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 14px; color: var(--text); }
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
-  .cal-day-name { text-align: center; font-size: 11px; font-weight: 600; color: var(--muted); padding: 4px 0; text-transform: uppercase; }
-  .cal-cell { min-height: 64px; background: var(--bg); border-radius: 6px; padding: 4px; position: relative; cursor: default; }
-  .cal-cell.oggi { background: var(--accent-l); }
-  .cal-cell.altro-mese .cal-num { color: var(--border); }
-  .cal-num { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 2px; }
-  .cal-event { font-size: 10px; font-weight: 600; padding: 2px 4px; border-radius: 4px; margin-bottom: 2px; line-height: 1.3; cursor: pointer; }
+  /* ── Calendario fullscreen ── */
+  .cal-wrap { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px; }
+  .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .cal-nav h3 { font-size: 16px; font-weight: 600; }
+  .cal-nav button { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 5px 12px; cursor: pointer; font-size: 14px; color: var(--text); transition: background .1s; }
+  .cal-nav button:hover { background: var(--bg); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .cal-day-name { text-align: center; font-size: 11px; font-weight: 600; color: var(--muted); padding: 4px 0 8px; text-transform: uppercase; }
+  .cal-cell { min-height: 80px; background: var(--bg); border-radius: 6px; padding: 5px; cursor: pointer; transition: background .1s; border: 2px solid transparent; }
+  .cal-cell:hover { background: var(--accent-l); border-color: var(--accent); }
+  .cal-cell.oggi { border-color: var(--accent); background: var(--accent-l); }
+  .cal-cell.altro-mese { opacity: .4; cursor: default; }
+  .cal-cell.altro-mese:hover { background: var(--bg); border-color: transparent; }
+  .cal-num { font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: 3px; }
+  .cal-cell.oggi .cal-num { color: var(--accent); font-weight: 700; }
+  .cal-event { font-size: 10px; font-weight: 600; padding: 2px 5px; border-radius: 4px; margin-bottom: 2px; line-height: 1.4; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .cal-event.IN_ATTESA  { background: var(--amber-l); color: var(--amber); }
   .cal-event.APPROVATA  { background: var(--green-l);  color: var(--green); }
   .cal-event.MODIFICATA { background: var(--green-l);  color: var(--green); }
   .cal-event.RIFIUTATA  { background: var(--red-l);    color: var(--red); }
 
+  /* legenda */
+  .cal-legenda { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; font-size: 12px; }
+  .cal-legenda-item { display: flex; align-items: center; gap: 5px; }
+  .cal-legenda-dot { width: 10px; height: 10px; border-radius: 3px; }
+
   /* ── Tabs admin ── */
   .tab-btns { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
   .tab-btn { padding: 7px 14px; border-radius: 99px; border: 1px solid var(--border); background: var(--surface); font-size: 14px; cursor: pointer; color: var(--muted); transition: all .15s; }
   .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  @media (max-width: 600px) {
+    .cal-cell { min-height: 56px; }
+    .cal-event { font-size: 9px; }
+  }
 </style>
 </head>
 <body>
@@ -184,63 +183,33 @@
       <button class="btn btn-ghost btn-sm" onclick="logout()">Esci</button>
     </div>
   </header>
-  <nav>
-    <button class="nav-btn active" onclick="showSection('app-utente','utente-nuova',this)">Nuova richiesta</button>
-    <button class="nav-btn" onclick="showSection('app-utente','utente-calendario',this); renderCalendario()">Calendario</button>
-    <button class="nav-btn" onclick="showSection('app-utente','utente-storico',this); caricaStorico()">Storico</button>
-  </nav>
-  <main>
-    <!-- Nuova richiesta -->
-    <div id="utente-nuova" class="section active">
-      <div class="card">
-        <div class="card-header">Nuova richiesta accensione</div>
-        <div class="card-body">
-          <div class="field">
-            <label>Impianto</label>
-            <select id="sel-impianto" onchange="aggiornaIdImpianto()">
-              <option value="">Seleziona impianto…</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>ID impianto</label>
-            <input type="text" id="inp-id-impianto" readonly style="background:#f5f5f0;color:var(--muted);font-family:monospace;font-size:13px" placeholder="— seleziona impianto —">
-          </div>
-          <div class="field">
-            <label>Data accensione</label>
-            <input type="date" id="inp-data">
-          </div>
-          <div class="row-2">
-            <div class="field">
-              <label>Ora inizio</label>
-              <input type="time" id="inp-ora-i">
-            </div>
-            <div class="field">
-              <label>Ora fine</label>
-              <input type="time" id="inp-ora-f">
-            </div>
-          </div>
-          <div class="field">
-            <label>Motivo / note</label>
-            <textarea id="inp-motivo" placeholder="es. Riunione straordinaria, manifestazione…"></textarea>
-          </div>
-          <button class="btn btn-primary btn-full" onclick="inviaRichiesta()">Invia richiesta</button>
-        </div>
-      </div>
-    </div>
 
-    <!-- Calendario -->
-    <div id="utente-calendario" class="section">
-      <div class="card">
-        <div class="card-body">
-          <div class="cal-nav">
-            <button onclick="cambioMese(-1)">&#8592;</button>
-            <h3 id="cal-titolo"></h3>
-            <button onclick="cambioMese(1)">&#8594;</button>
-          </div>
-          <div class="cal-grid" id="cal-grid"></div>
+  <!-- nav con tabs a sinistra e bottone nuova richiesta a destra -->
+  <div class="nav-utente">
+    <div class="nav-utente-tabs">
+      <button class="nav-btn active" onclick="showSection('app-utente','utente-calendario',this); disegnaCalendario()">Calendario</button>
+      <button class="nav-btn" onclick="showSection('app-utente','utente-storico',this); caricaStorico()">Storico</button>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="apriModalNuovaRichiesta(null)">+ Nuova richiesta</button>
+  </div>
+
+  <main>
+    <!-- Calendario (home) -->
+    <div id="utente-calendario" class="section active">
+      <div class="cal-wrap">
+        <div class="cal-nav">
+          <button onclick="cambioMese(-1)">&#8592;</button>
+          <h3 id="cal-titolo"></h3>
+          <button onclick="cambioMese(1)">&#8594;</button>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-legenda">
+          <div class="cal-legenda-item"><div class="cal-legenda-dot" style="background:var(--amber-l);border:1px solid var(--amber)"></div><span style="color:var(--muted)">In attesa</span></div>
+          <div class="cal-legenda-item"><div class="cal-legenda-dot" style="background:var(--green-l);border:1px solid var(--green)"></div><span style="color:var(--muted)">Approvata</span></div>
+          <div class="cal-legenda-item"><div class="cal-legenda-dot" style="background:var(--red-l);border:1px solid var(--red)"></div><span style="color:var(--muted)">Rifiutata</span></div>
+          <div class="cal-legenda-item" style="margin-left:auto;font-size:11px;color:var(--muted)">Clicca su un giorno per fare una richiesta</div>
         </div>
       </div>
-      <div id="cal-dettaglio"></div>
     </div>
 
     <!-- Storico -->
@@ -270,7 +239,7 @@
     <button class="nav-btn active" onclick="showSection('app-coordinatore','coord-attesa',this); caricaRichiesteCoord('IN_ATTESA')">In attesa <span id="badge-attesa"></span></button>
     <button class="nav-btn" onclick="showSection('app-coordinatore','coord-tutte',this); caricaRichiesteCoord('TUTTE')">Tutte</button>
   </nav>
-  <main>
+  <main class="narrow">
     <div id="coord-attesa" class="section active">
       <div class="card">
         <div class="card-header">Richieste in attesa</div>
@@ -305,7 +274,7 @@
     <button class="nav-btn" onclick="showSection('app-superuser','super-commesse',this); caricaCommesse()">Commesse</button>
     <button class="nav-btn" onclick="showSection('app-superuser','super-impianti',this); caricaImpianti()">Impianti</button>
   </nav>
-  <main>
+  <main class="narrow">
     <div id="super-richieste" class="section active">
       <div class="tab-btns">
         <button class="tab-btn active" onclick="filtraRichieste('TUTTE',this)">Tutte</button>
@@ -336,15 +305,56 @@
   </main>
 </div>
 
+<!-- MODAL NUOVA RICHIESTA UTENTE -->
+<div id="modal-nuova-richiesta" class="modal-overlay" onclick="chiudiModal('modal-nuova-richiesta')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3>Nuova richiesta accensione</h3>
+    <div class="field">
+      <label>Impianto</label>
+      <select id="sel-impianto" onchange="aggiornaIdImpianto()">
+        <option value="">Seleziona impianto…</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>ID impianto</label>
+      <input type="text" id="inp-id-impianto" readonly style="background:#f5f5f0;color:var(--muted);font-family:monospace;font-size:13px" placeholder="— seleziona impianto —">
+    </div>
+    <div class="field">
+      <label>Data accensione</label>
+      <input type="date" id="inp-data">
+    </div>
+    <div class="row-2">
+      <div class="field"><label>Ora inizio</label><input type="time" id="inp-ora-i"></div>
+      <div class="field"><label>Ora fine</label><input type="time" id="inp-ora-f"></div>
+    </div>
+    <div class="field">
+      <label>Motivo / note</label>
+      <textarea id="inp-motivo" placeholder="es. Riunione straordinaria, manifestazione…"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="chiudiModal('modal-nuova-richiesta')">Annulla</button>
+      <button class="btn btn-primary" onclick="inviaRichiesta()">Invia richiesta</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETTAGLIO EVENTO CALENDARIO -->
+<div id="modal-evento" class="modal-overlay" onclick="chiudiModal('modal-evento')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3 id="ev-titolo"></h3>
+    <div id="ev-body" style="font-size:14px;color:var(--muted);line-height:1.8"></div>
+    <div class="modal-actions" style="margin-top:20px">
+      <button class="btn btn-ghost btn-full" onclick="chiudiModal('modal-evento')">Chiudi</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL MODIFICA COORDINATORE -->
 <div id="modal-decisione" class="modal-overlay" onclick="chiudiModal('modal-decisione')">
   <div class="modal" onclick="event.stopPropagation()">
     <h3 id="modal-dec-titolo">Modifica richiesta</h3>
     <div id="modal-dec-info" style="font-size:13px;color:var(--muted);margin-bottom:14px"></div>
-    <div class="field">
-      <label>Data accensione</label>
-      <input type="date" id="m-data">
-    </div>
+    <div class="field"><label>Data accensione</label><input type="date" id="m-data"></div>
     <div class="row-2">
       <div class="field"><label>Ora inizio</label><input type="time" id="m-ora-i"></div>
       <div class="field"><label>Ora fine</label><input type="time" id="m-ora-f"></div>
@@ -396,10 +406,7 @@
       <div class="field-note">Copia gli ID dalla tab Impianti</div>
     </div>
     <div class="field"><label>Stato</label>
-      <select id="eu-attivo">
-        <option value="true">Attivo</option>
-        <option value="false">Disabilitato</option>
-      </select>
+      <select id="eu-attivo"><option value="true">Attivo</option><option value="false">Disabilitato</option></select>
     </div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="chiudiModal('modal-utente-edit')">Annulla</button>
@@ -443,14 +450,14 @@
 <script>
 const API = 'https://aged-union-27fb.davide-cori93.workers.dev';
 
-let user = null;
-let tutteRichieste = [];
-let mieRichieste = [];
+let user            = null;
+let tutteRichieste  = [];
+let mieRichieste    = [];
 let richiestaCorrente = null;
-let commesseCache = [];
-let impiantiCache = [];
-let calMese = new Date().getMonth();
-let calAnno = new Date().getFullYear();
+let commesseCache   = [];
+let impiantiCache   = [];
+let calMese         = new Date().getMonth();
+let calAnno         = new Date().getFullYear();
 
 // ── API ──────────────────────────────────────────────────────
 async function api(action, body = {}) {
@@ -483,8 +490,7 @@ function mostraErroreLogin(msg) {
 }
 
 function logout() {
-  user = null;
-  mieRichieste = [];
+  user = null; mieRichieste = []; tutteRichieste = [];
   document.querySelectorAll('.app').forEach(a => { a.classList.remove('active'); a.style.display = ''; });
   document.getElementById('view-login').style.display = 'flex';
   document.getElementById('inp-username').value = '';
@@ -501,6 +507,8 @@ async function avviaApp() {
     document.getElementById('app-utente').classList.add('active');
     document.getElementById('app-utente').style.display = 'flex';
     await caricaImpianti_utente();
+    await caricaMieRichieste();
+    disegnaCalendario();
   } else if (ruolo === 'coordinatore') {
     document.getElementById('c-nome').textContent = user.nome;
     document.getElementById('app-coordinatore').classList.add('active');
@@ -517,7 +525,8 @@ async function avviaApp() {
 function showSection(appId, sectionId, btn) {
   document.querySelectorAll(`#${appId} .section`).forEach(s => s.classList.remove('active'));
   document.getElementById(sectionId).classList.add('active');
-  document.querySelectorAll(`#${appId} .nav-btn`).forEach(b => b.classList.remove('active'));
+  const navBtns = document.querySelectorAll(`#${appId} .nav-btn`);
+  navBtns.forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
 }
 
@@ -527,6 +536,7 @@ async function caricaImpianti_utente() {
   if (!r.ok) return;
   impiantiCache = r.impianti;
   const sel = document.getElementById('sel-impianto');
+  sel.innerHTML = '<option value="">Seleziona impianto…</option>';
   r.impianti.forEach(imp => {
     const opt = document.createElement('option');
     opt.value = imp.id;
@@ -536,12 +546,30 @@ async function caricaImpianti_utente() {
 }
 
 function aggiornaIdImpianto() {
-  const id  = document.getElementById('sel-impianto').value;
-  const inp = document.getElementById('inp-id-impianto');
-  inp.value = id || '';
+  const id = document.getElementById('sel-impianto').value;
+  document.getElementById('inp-id-impianto').value = id || '';
 }
 
-// ── UTENTE — NUOVA RICHIESTA ──────────────────────────────────
+// ── UTENTE — RICHIESTE ────────────────────────────────────────
+async function caricaMieRichieste() {
+  const r = await api('getMieRichieste', { username: user.username });
+  mieRichieste = r.ok ? r.richieste : [];
+}
+
+function apriModalNuovaRichiesta(dataPrecompilata) {
+  if (dataPrecompilata) {
+    document.getElementById('inp-data').value = dataPrecompilata;
+  } else {
+    document.getElementById('inp-data').value = '';
+  }
+  document.getElementById('inp-ora-i').value   = '';
+  document.getElementById('inp-ora-f').value   = '';
+  document.getElementById('inp-motivo').value  = '';
+  document.getElementById('sel-impianto').value = '';
+  document.getElementById('inp-id-impianto').value = '';
+  document.getElementById('modal-nuova-richiesta').classList.add('open');
+}
+
 async function inviaRichiesta() {
   const impianto_id     = document.getElementById('sel-impianto').value;
   const data_accensione = document.getElementById('inp-data').value;
@@ -554,13 +582,10 @@ async function inviaRichiesta() {
   const r = await api('creaRichiesta', { username: user.username, impianto_id, data_accensione, ora_inizio, ora_fine, motivo });
   if (r.ok) {
     toast('Richiesta inviata');
-    document.getElementById('inp-data').value   = '';
-    document.getElementById('inp-ora-i').value  = '';
-    document.getElementById('inp-ora-f').value  = '';
-    document.getElementById('inp-motivo').value = '';
-    document.getElementById('sel-impianto').value = '';
-    document.getElementById('inp-id-impianto').value = '';
+    chiudiModal('modal-nuova-richiesta');
     mieRichieste = [];
+    await caricaMieRichieste();
+    disegnaCalendario();
   } else {
     toast('Errore: ' + r.error);
   }
@@ -568,13 +593,11 @@ async function inviaRichiesta() {
 
 // ── UTENTE — STORICO ──────────────────────────────────────────
 async function caricaStorico() {
-  if (!mieRichieste.length) {
-    const r = await api('getMieRichieste', { username: user.username });
-    mieRichieste = r.ok ? r.richieste.reverse() : [];
-  }
+  if (!mieRichieste.length) await caricaMieRichieste();
   const el = document.getElementById('lista-storico');
-  if (!mieRichieste.length) { el.innerHTML = '<div class="empty">Nessuna richiesta ancora</div>'; return; }
-  el.innerHTML = mieRichieste.map(renderRigaStorico).join('');
+  const lista = [...mieRichieste].reverse();
+  if (!lista.length) { el.innerHTML = '<div class="empty">Nessuna richiesta ancora</div>'; return; }
+  el.innerHTML = lista.map(renderRigaStorico).join('');
 }
 
 function renderRigaStorico(ric) {
@@ -593,14 +616,6 @@ function renderRigaStorico(ric) {
 }
 
 // ── UTENTE — CALENDARIO ───────────────────────────────────────
-async function renderCalendario() {
-  if (!mieRichieste.length) {
-    const r = await api('getMieRichieste', { username: user.username });
-    mieRichieste = r.ok ? r.richieste : [];
-  }
-  disegnaCalendario();
-}
-
 function cambioMese(delta) {
   calMese += delta;
   if (calMese > 11) { calMese = 0; calAnno++; }
@@ -615,39 +630,41 @@ function disegnaCalendario() {
   const grid = document.getElementById('cal-grid');
   grid.innerHTML = '';
 
-  const giorni = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
-  giorni.forEach(g => {
+  ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'].forEach(g => {
     const el = document.createElement('div');
     el.className = 'cal-day-name';
     el.textContent = g;
     grid.appendChild(el);
   });
 
-  const primoGiorno = new Date(calAnno, calMese, 1);
-  const ultimoGiorno = new Date(calAnno, calMese + 1, 0);
-  const oggi = new Date();
-
-  let inizioGriglia = new Date(primoGiorno);
+  const primoGiorno  = new Date(calAnno, calMese, 1);
+  const oggi         = new Date();
   let dow = primoGiorno.getDay();
   dow = dow === 0 ? 6 : dow - 1;
+
+  const inizioGriglia = new Date(primoGiorno);
   inizioGriglia.setDate(inizioGriglia.getDate() - dow);
 
   const richiesteMap = {};
   mieRichieste.forEach(ric => {
-    const data = normalizzaData(ric.data_accensione);
-    if (!richiesteMap[data]) richiesteMap[data] = [];
-    richiesteMap[data].push(ric);
+    const k = normalizzaData(ric.data_accensione);
+    if (!richiesteMap[k]) richiesteMap[k] = [];
+    richiesteMap[k].push(ric);
   });
 
   for (let i = 0; i < 42; i++) {
     const d = new Date(inizioGriglia);
     d.setDate(d.getDate() + i);
     const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const altroMese = d.getMonth() !== calMese;
+    const isOggi = d.toDateString() === oggi.toDateString();
 
     const cell = document.createElement('div');
-    cell.className = 'cal-cell';
-    if (d.getMonth() !== calMese) cell.classList.add('altro-mese');
-    if (d.toDateString() === oggi.toDateString()) cell.classList.add('oggi');
+    cell.className = 'cal-cell' + (altroMese ? ' altro-mese' : '') + (isOggi ? ' oggi' : '');
+
+    if (!altroMese) {
+      cell.onclick = () => apriModalNuovaRichiesta(key);
+    }
 
     const num = document.createElement('div');
     num.className = 'cal-num';
@@ -658,15 +675,31 @@ function disegnaCalendario() {
       richiesteMap[key].forEach(ric => {
         const ev = document.createElement('div');
         ev.className = `cal-event ${ric.stato}`;
-        ev.textContent = ric.impianto_nome.substring(0, 12) + (ric.impianto_nome.length > 12 ? '…' : '');
-        ev.title = `${ric.impianto_nome} · ${ric.ora_inizio}–${ric.ora_fine}`;
-        ev.onclick = () => mostraDettaglioCalendario(ric);
+        ev.textContent = ric.impianto_nome.substring(0, 14) + (ric.impianto_nome.length > 14 ? '…' : '');
+        ev.title = `${ric.impianto_nome} · ${ric.ora_inizio}–${ric.ora_fine} · ${labelStato(ric.stato)}`;
+        ev.onclick = (e) => {
+          e.stopPropagation();
+          mostraEventoModal(ric);
+        };
         cell.appendChild(ev);
       });
     }
 
     grid.appendChild(cell);
   }
+}
+
+function mostraEventoModal(ric) {
+  document.getElementById('ev-titolo').textContent = ric.impianto_nome;
+  document.getElementById('ev-body').innerHTML = `
+    <div style="margin-bottom:4px"><span class="stato stato-${ric.stato}">${labelStato(ric.stato)}</span></div>
+    <div style="font-family:monospace;font-size:12px;margin-bottom:8px">${ric.impianto_id}</div>
+    <div><strong>Data:</strong> ${ric.data_accensione}</div>
+    <div><strong>Orario:</strong> ${ric.ora_inizio} – ${ric.ora_fine}</div>
+    ${ric.motivo ? `<div><strong>Motivo:</strong> ${ric.motivo}</div>` : ''}
+    ${ric.note_coord ? `<div style="color:var(--amber);margin-top:6px"><strong>Nota coordinatore:</strong> ${ric.note_coord}</div>` : ''}
+  `;
+  document.getElementById('modal-evento').classList.add('open');
 }
 
 function normalizzaData(dataStr) {
@@ -678,35 +711,15 @@ function normalizzaData(dataStr) {
   return dataStr;
 }
 
-function mostraDettaglioCalendario(ric) {
-  const el = document.getElementById('cal-dettaglio');
-  el.innerHTML = `<div class="card">
-    <div class="card-body">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <div style="font-weight:500">${ric.impianto_nome}</div>
-        <span class="stato stato-${ric.stato}">${labelStato(ric.stato)}</span>
-      </div>
-      <div class="richiesta-id" style="margin-bottom:6px">${ric.impianto_id}</div>
-      <div class="richiesta-meta">${ric.data_accensione} · ${ric.ora_inizio}–${ric.ora_fine}</div>
-      ${ric.motivo ? `<div class="richiesta-meta" style="margin-top:4px">${ric.motivo}</div>` : ''}
-      ${ric.note_coord ? `<div class="richiesta-meta" style="color:var(--amber);margin-top:4px">Nota: ${ric.note_coord}</div>` : ''}
-    </div>
-  </div>`;
-}
-
 // ── COORDINATORE ──────────────────────────────────────────────
 async function caricaRichiesteCoord(filtro) {
   const r = await api('getRichiesteCommessa', { username: user.username });
   if (!r.ok) return;
-
   const attesa = r.richieste.filter(x => x.stato === 'IN_ATTESA');
-  const badgeEl = document.getElementById('badge-attesa');
-  badgeEl.textContent = attesa.length ? `(${attesa.length})` : '';
-
-  const lista    = filtro === 'TUTTE' ? r.richieste.reverse() : attesa;
+  document.getElementById('badge-attesa').textContent = attesa.length ? `(${attesa.length})` : '';
+  const lista    = filtro === 'TUTTE' ? [...r.richieste].reverse() : attesa;
   const targetId = filtro === 'TUTTE' ? 'lista-coord-tutte' : 'lista-coord-attesa';
   const el       = document.getElementById(targetId);
-
   if (!lista.length) { el.innerHTML = '<div class="empty">Nessuna richiesta</div>'; return; }
   el.innerHTML = lista.map(renderRigaCoord).join('');
 }
@@ -758,21 +771,16 @@ function apriDecisione(ric) {
 async function decidi(stato) {
   if (!richiestaCorrente) return;
   const r = await api('aggiornaStato', {
-    id:              richiestaCorrente.id,
-    stato,
-    note:            document.getElementById('m-note').value,
-    coordinatore:    user.username,
+    id: richiestaCorrente.id, stato,
+    note: document.getElementById('m-note').value,
+    coordinatore: user.username,
     data_accensione: document.getElementById('m-data').value,
-    ora_inizio:      document.getElementById('m-ora-i').value,
-    ora_fine:        document.getElementById('m-ora-f').value,
+    ora_inizio: document.getElementById('m-ora-i').value,
+    ora_fine: document.getElementById('m-ora-f').value,
   });
   chiudiModal('modal-decisione');
-  if (r.ok) {
-    toast('Modificata e approvata');
-    caricaRichiesteCoord('IN_ATTESA');
-  } else {
-    toast('Errore: ' + r.error);
-  }
+  if (r.ok) { toast('Modificata e approvata'); caricaRichiesteCoord('IN_ATTESA'); }
+  else toast('Errore: ' + r.error);
 }
 
 // ── SUPERUSER — RICHIESTE ─────────────────────────────────────
@@ -827,17 +835,14 @@ async function caricaUtenti() {
   </div>`).join('');
 }
 
-function apriModalUtente() {
-  popolaSelectCommesse('nu-commessa');
-  document.getElementById('modal-utente').classList.add('open');
-}
+function apriModalUtente() { popolaSelectCommesse('nu-commessa'); document.getElementById('modal-utente').classList.add('open'); }
 
 async function salvaUtente() {
   const r = await api('creaUtente', {
-    username:    document.getElementById('nu-username').value.trim(),
-    pin:         document.getElementById('nu-pin').value.trim(),
-    ruolo:       document.getElementById('nu-ruolo').value,
-    nome:        document.getElementById('nu-nome').value.trim(),
+    username: document.getElementById('nu-username').value.trim(),
+    pin:      document.getElementById('nu-pin').value.trim(),
+    ruolo:    document.getElementById('nu-ruolo').value,
+    nome:     document.getElementById('nu-nome').value.trim(),
     commessa_id: document.getElementById('nu-commessa').value,
   });
   chiudiModal('modal-utente');
@@ -857,12 +862,12 @@ function apriModificaUtente(u) {
 
 async function salvaModificaUtente() {
   const r = await api('aggiornaUtente', {
-    username:     document.getElementById('eu-username').value,
-    nome:         document.getElementById('eu-nome').value,
-    pin:          document.getElementById('eu-pin').value,
-    commessa_id:  document.getElementById('eu-commessa').value,
+    username: document.getElementById('eu-username').value,
+    nome:     document.getElementById('eu-nome').value,
+    pin:      document.getElementById('eu-pin').value,
+    commessa_id: document.getElementById('eu-commessa').value,
     impianti_ids: document.getElementById('eu-impianti').value,
-    attivo:       document.getElementById('eu-attivo').value === 'true',
+    attivo: document.getElementById('eu-attivo').value === 'true',
   });
   chiudiModal('modal-utente-edit');
   if (r.ok) { toast('Utente aggiornato'); caricaUtenti(); }
@@ -886,9 +891,9 @@ function apriModalCommessa() { document.getElementById('modal-commessa').classLi
 
 async function salvaCommessa() {
   const r = await api('creaCommessa', {
-    id:             document.getElementById('nc-id').value.trim(),
-    nome:           document.getElementById('nc-nome').value.trim(),
-    comune:         document.getElementById('nc-comune').value.trim(),
+    id: document.getElementById('nc-id').value.trim(),
+    nome: document.getElementById('nc-nome').value.trim(),
+    comune: document.getElementById('nc-comune').value.trim(),
     coord_username: document.getElementById('nc-coord').value.trim(),
   });
   chiudiModal('modal-commessa');
@@ -910,16 +915,13 @@ async function caricaImpianti() {
   </div>`).join('');
 }
 
-function apriModalImpianto() {
-  popolaSelectCommesse('ni-commessa');
-  document.getElementById('modal-impianto').classList.add('open');
-}
+function apriModalImpianto() { popolaSelectCommesse('ni-commessa'); document.getElementById('modal-impianto').classList.add('open'); }
 
 async function salvaImpianto() {
   const r = await api('creaImpianto', {
-    nome:        document.getElementById('ni-nome').value.trim(),
-    indirizzo:   document.getElementById('ni-indirizzo').value.trim(),
-    comune:      document.getElementById('ni-comune').value.trim(),
+    nome: document.getElementById('ni-nome').value.trim(),
+    indirizzo: document.getElementById('ni-indirizzo').value.trim(),
+    comune: document.getElementById('ni-comune').value.trim(),
     commessa_id: document.getElementById('ni-commessa').value,
   });
   chiudiModal('modal-impianto');
