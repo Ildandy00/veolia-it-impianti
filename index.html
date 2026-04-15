@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Accensioni Straordinarie</title>
 <style>
-  /* ── Reset & base ── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
@@ -35,7 +34,6 @@
     min-height: 100vh;
   }
 
-  /* ── Layout ── */
   .app { display: none; flex-direction: column; min-height: 100vh; }
   .app.active { display: flex; }
 
@@ -55,37 +53,14 @@
   .logo { font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 8px; }
   .logo svg { width: 20px; height: 20px; color: var(--accent); }
 
-  .user-chip {
-    display: flex; align-items: center; gap: 8px;
-    font-size: 13px; color: var(--muted);
-  }
-  .badge-role {
-    font-size: 11px; font-weight: 600; padding: 2px 8px;
-    border-radius: 99px; text-transform: uppercase; letter-spacing: .4px;
-  }
-  .role-utente      { background: var(--accent-l); color: var(--accent); }
-  .role-coordinatore{ background: var(--green-l);  color: var(--green); }
-  .role-superuser   { background: var(--amber-l);  color: var(--amber); }
+  .user-chip { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+  .badge-role { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px; text-transform: uppercase; letter-spacing: .4px; }
+  .role-utente       { background: var(--accent-l); color: var(--accent); }
+  .role-coordinatore { background: var(--green-l);  color: var(--green); }
+  .role-superuser    { background: var(--amber-l);  color: var(--amber); }
 
-  nav {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  .nav-btn {
-    flex: none;
-    padding: 12px 20px;
-    font-size: 14px;
-    border: none;
-    background: none;
-    cursor: pointer;
-    color: var(--muted);
-    border-bottom: 2px solid transparent;
-    white-space: nowrap;
-    transition: color .15s, border-color .15s;
-  }
+  nav { background: var(--surface); border-bottom: 1px solid var(--border); display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .nav-btn { flex: none; padding: 12px 20px; font-size: 14px; border: none; background: none; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; white-space: nowrap; transition: color .15s, border-color .15s; }
   .nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
 
   main { flex: 1; padding: 16px; max-width: 800px; width: 100%; margin: 0 auto; }
@@ -93,54 +68,20 @@
   .section { display: none; }
   .section.active { display: block; }
 
-  /* ── Cards & form ── */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    margin-bottom: 12px;
-    overflow: hidden;
-  }
-  .card-header {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border);
-    font-weight: 500;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 12px; overflow: hidden; }
+  .card-header { padding: 14px 16px; border-bottom: 1px solid var(--border); font-weight: 500; display: flex; justify-content: space-between; align-items: center; }
   .card-body { padding: 16px; }
 
   .field { margin-bottom: 14px; }
   .field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 5px; color: var(--muted); }
-  .field input, .field select, .field textarea {
-    width: 100%;
-    padding: 9px 12px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 15px;
-    font-family: inherit;
-    background: var(--surface);
-    color: var(--text);
-    transition: border-color .15s;
-  }
-  .field input:focus, .field select:focus, .field textarea:focus {
-    outline: none;
-    border-color: var(--accent);
-  }
+  .field input, .field select, .field textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 15px; font-family: inherit; background: var(--surface); color: var(--text); transition: border-color .15s; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
   .field textarea { min-height: 80px; resize: vertical; }
+  .field-note { font-size: 12px; color: var(--muted); margin-top: 4px; }
 
   .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-  /* ── Buttons ── */
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 9px 18px;
-    border: none; border-radius: 8px;
-    font-size: 14px; font-weight: 500; font-family: inherit;
-    cursor: pointer; transition: opacity .15s;
-  }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 18px; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; font-family: inherit; cursor: pointer; transition: opacity .15s; }
   .btn:active { opacity: .8; }
   .btn-primary { background: var(--accent); color: #fff; }
   .btn-success { background: var(--green); color: #fff; }
@@ -149,105 +90,62 @@
   .btn-sm      { padding: 6px 12px; font-size: 13px; }
   .btn-full    { width: 100%; }
 
-  /* ── Stato badges ── */
-  .stato {
-    display: inline-block;
-    font-size: 12px; font-weight: 600;
-    padding: 3px 10px; border-radius: 99px;
-    text-transform: uppercase; letter-spacing: .3px;
-  }
+  .stato { display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 99px; text-transform: uppercase; letter-spacing: .3px; }
   .stato-IN_ATTESA  { background: var(--amber-l); color: var(--amber); }
   .stato-APPROVATA  { background: var(--green-l); color: var(--green); }
   .stato-MODIFICATA { background: var(--green-l); color: var(--green); }
   .stato-RIFIUTATA  { background: var(--red-l);   color: var(--red); }
 
-  /* ── Richiesta row ── */
-  .richiesta-row {
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
+  .richiesta-row { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
   .richiesta-row:last-child { border-bottom: none; }
   .richiesta-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
   .richiesta-titolo { font-weight: 500; font-size: 15px; }
   .richiesta-meta { font-size: 13px; color: var(--muted); }
+  .richiesta-id { font-size: 11px; color: var(--muted); font-family: monospace; }
   .richiesta-azioni { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
 
   /* ── Login ── */
-  #view-login {
-    min-height: 100vh;
-    display: flex; align-items: center; justify-content: center;
-    padding: 24px;
-    background: var(--bg);
-  }
-  .login-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    box-shadow: var(--shadow);
-    padding: 32px 28px;
-    width: 100%;
-    max-width: 360px;
-  }
-  .login-logo {
-    text-align: center;
-    margin-bottom: 24px;
-  }
+  #view-login { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: var(--bg); }
+  .login-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); padding: 32px 28px; width: 100%; max-width: 360px; }
+  .login-logo { text-align: center; margin-bottom: 24px; }
   .login-logo svg { width: 40px; height: 40px; color: var(--accent); }
   .login-logo h1 { font-size: 18px; font-weight: 600; margin-top: 8px; }
   .login-logo p  { font-size: 13px; color: var(--muted); margin-top: 2px; }
   .login-error { background: var(--red-l); color: var(--red); padding: 10px 14px; border-radius: 8px; font-size: 14px; margin-bottom: 16px; display: none; }
 
-  /* ── Empty state ── */
   .empty { text-align: center; padding: 40px 16px; color: var(--muted); font-size: 14px; }
 
-  /* ── Toast ── */
-  #toast {
-    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    background: #1a1a18; color: #fff;
-    padding: 10px 20px; border-radius: 99px;
-    font-size: 14px; z-index: 999;
-    opacity: 0; transition: opacity .2s; pointer-events: none;
-    white-space: nowrap;
-  }
+  #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1a1a18; color: #fff; padding: 10px 20px; border-radius: 99px; font-size: 14px; z-index: 999; opacity: 0; transition: opacity .2s; pointer-events: none; white-space: nowrap; }
   #toast.show { opacity: 1; }
 
   /* ── Modal ── */
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 100;
-    display: none; align-items: flex-end; justify-content: center;
-    padding-bottom: env(safe-area-inset-bottom);
-  }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 100; display: none; align-items: flex-end; justify-content: center; padding-bottom: env(safe-area-inset-bottom); }
   .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--surface);
-    border-radius: 20px 20px 0 0;
-    padding: 20px 20px 32px;
-    width: 100%; max-width: 500px;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
+  .modal { background: var(--surface); border-radius: 20px 20px 0 0; padding: 20px 20px 32px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
   .modal h3 { font-size: 17px; font-weight: 600; margin-bottom: 16px; }
   .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
   .modal-actions .btn { flex: 1; }
 
+  /* ── Calendario ── */
+  .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .cal-nav h3 { font-size: 15px; font-weight: 600; }
+  .cal-nav button { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 14px; color: var(--text); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .cal-day-name { text-align: center; font-size: 11px; font-weight: 600; color: var(--muted); padding: 4px 0; text-transform: uppercase; }
+  .cal-cell { min-height: 64px; background: var(--bg); border-radius: 6px; padding: 4px; position: relative; cursor: default; }
+  .cal-cell.oggi { background: var(--accent-l); }
+  .cal-cell.altro-mese .cal-num { color: var(--border); }
+  .cal-num { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 2px; }
+  .cal-event { font-size: 10px; font-weight: 600; padding: 2px 4px; border-radius: 4px; margin-bottom: 2px; line-height: 1.3; cursor: pointer; }
+  .cal-event.IN_ATTESA  { background: var(--amber-l); color: var(--amber); }
+  .cal-event.APPROVATA  { background: var(--green-l);  color: var(--green); }
+  .cal-event.MODIFICATA { background: var(--green-l);  color: var(--green); }
+  .cal-event.RIFIUTATA  { background: var(--red-l);    color: var(--red); }
+
   /* ── Tabs admin ── */
   .tab-btns { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-  .tab-btn {
-    padding: 7px 14px; border-radius: 99px; border: 1px solid var(--border);
-    background: var(--surface); font-size: 14px; cursor: pointer; color: var(--muted);
-    transition: all .15s;
-  }
+  .tab-btn { padding: 7px 14px; border-radius: 99px; border: 1px solid var(--border); background: var(--surface); font-size: 14px; cursor: pointer; color: var(--muted); transition: all .15s; }
   .tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-  .sub-tab { display: none; }
-  .sub-tab.active { display: block; }
-
-  @media (min-width: 500px) {
-    .row-2 { grid-template-columns: 1fr 1fr; }
-  }
 </style>
 </head>
 <body>
@@ -256,10 +154,7 @@
 <div id="view-login">
   <div class="login-box">
     <div class="login-logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
-        <polyline points="9 22 9 12 15 12 15 22"/>
-      </svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       <h1>Accensioni straordinarie</h1>
       <p>Siram Veolia — Marche</p>
     </div>
@@ -290,8 +185,9 @@
     </div>
   </header>
   <nav>
-    <button class="nav-btn active" onclick="showSection('utente','nuova')">Nuova richiesta</button>
-    <button class="nav-btn" onclick="showSection('utente','storico'); caricaStorico()">Le mie richieste</button>
+    <button class="nav-btn active" onclick="showSection('app-utente','utente-nuova',this)">Nuova richiesta</button>
+    <button class="nav-btn" onclick="showSection('app-utente','utente-calendario',this); renderCalendario()">Calendario</button>
+    <button class="nav-btn" onclick="showSection('app-utente','utente-storico',this); caricaStorico()">Storico</button>
   </nav>
   <main>
     <!-- Nuova richiesta -->
@@ -301,9 +197,13 @@
         <div class="card-body">
           <div class="field">
             <label>Impianto</label>
-            <select id="sel-impianto">
+            <select id="sel-impianto" onchange="aggiornaIdImpianto()">
               <option value="">Seleziona impianto…</option>
             </select>
+          </div>
+          <div class="field">
+            <label>ID impianto</label>
+            <input type="text" id="inp-id-impianto" readonly style="background:#f5f5f0;color:var(--muted);font-family:monospace;font-size:13px" placeholder="— seleziona impianto —">
           </div>
           <div class="field">
             <label>Data accensione</label>
@@ -328,9 +228,24 @@
       </div>
     </div>
 
+    <!-- Calendario -->
+    <div id="utente-calendario" class="section">
+      <div class="card">
+        <div class="card-body">
+          <div class="cal-nav">
+            <button onclick="cambioMese(-1)">&#8592;</button>
+            <h3 id="cal-titolo"></h3>
+            <button onclick="cambioMese(1)">&#8594;</button>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
+      </div>
+      <div id="cal-dettaglio"></div>
+    </div>
+
     <!-- Storico -->
     <div id="utente-storico" class="section">
-      <div class="card" id="card-storico">
+      <div class="card">
         <div class="card-header">Le mie richieste</div>
         <div id="lista-storico"><div class="empty">Caricamento…</div></div>
       </div>
@@ -352,16 +267,13 @@
     </div>
   </header>
   <nav>
-    <button class="nav-btn active" onclick="showSection('coord','attesa'); caricaRichiesteCoord('IN_ATTESA')">In attesa</button>
-    <button class="nav-btn" onclick="showSection('coord','tutte'); caricaRichiesteCoord('TUTTE')">Tutte</button>
+    <button class="nav-btn active" onclick="showSection('app-coordinatore','coord-attesa',this); caricaRichiesteCoord('IN_ATTESA')">In attesa <span id="badge-attesa"></span></button>
+    <button class="nav-btn" onclick="showSection('app-coordinatore','coord-tutte',this); caricaRichiesteCoord('TUTTE')">Tutte</button>
   </nav>
   <main>
     <div id="coord-attesa" class="section active">
       <div class="card">
-        <div class="card-header">
-          <span>Richieste in attesa</span>
-          <span id="badge-attesa" style="font-size:13px;color:var(--muted)"></span>
-        </div>
+        <div class="card-header">Richieste in attesa</div>
         <div id="lista-coord-attesa"><div class="empty">Caricamento…</div></div>
       </div>
     </div>
@@ -388,13 +300,12 @@
     </div>
   </header>
   <nav>
-    <button class="nav-btn active" onclick="showSection('super','richieste'); caricaTutteRichieste()">Richieste</button>
-    <button class="nav-btn" onclick="showSection('super','utenti'); caricaUtenti()">Utenti</button>
-    <button class="nav-btn" onclick="showSection('super','commesse'); caricaCommesse()">Commesse</button>
-    <button class="nav-btn" onclick="showSection('super','impianti'); caricaImpianti()">Impianti</button>
+    <button class="nav-btn active" onclick="showSection('app-superuser','super-richieste',this); caricaTutteRichieste()">Richieste</button>
+    <button class="nav-btn" onclick="showSection('app-superuser','super-utenti',this); caricaUtenti()">Utenti</button>
+    <button class="nav-btn" onclick="showSection('app-superuser','super-commesse',this); caricaCommesse()">Commesse</button>
+    <button class="nav-btn" onclick="showSection('app-superuser','super-impianti',this); caricaImpianti()">Impianti</button>
   </nav>
   <main>
-    <!-- Richieste globali -->
     <div id="super-richieste" class="section active">
       <div class="tab-btns">
         <button class="tab-btn active" onclick="filtraRichieste('TUTTE',this)">Tutte</button>
@@ -402,47 +313,33 @@
         <button class="tab-btn" onclick="filtraRichieste('APPROVATA',this)">Approvate</button>
         <button class="tab-btn" onclick="filtraRichieste('RIFIUTATA',this)">Rifiutate</button>
       </div>
-      <div class="card">
-        <div id="lista-super-richieste"><div class="empty">Caricamento…</div></div>
-      </div>
+      <div class="card"><div id="lista-super-richieste"><div class="empty">Caricamento…</div></div></div>
     </div>
-
-    <!-- Utenti -->
     <div id="super-utenti" class="section">
       <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
         <button class="btn btn-primary btn-sm" onclick="apriModalUtente()">+ Nuovo utente</button>
       </div>
-      <div class="card">
-        <div id="lista-utenti"><div class="empty">Caricamento…</div></div>
-      </div>
+      <div class="card"><div id="lista-utenti"><div class="empty">Caricamento…</div></div></div>
     </div>
-
-    <!-- Commesse -->
     <div id="super-commesse" class="section">
       <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
         <button class="btn btn-primary btn-sm" onclick="apriModalCommessa()">+ Nuova commessa</button>
       </div>
-      <div class="card">
-        <div id="lista-commesse"><div class="empty">Caricamento…</div></div>
-      </div>
+      <div class="card"><div id="lista-commesse"><div class="empty">Caricamento…</div></div></div>
     </div>
-
-    <!-- Impianti -->
     <div id="super-impianti" class="section">
       <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
         <button class="btn btn-primary btn-sm" onclick="apriModalImpianto()">+ Nuovo impianto</button>
       </div>
-      <div class="card">
-        <div id="lista-impianti"><div class="empty">Caricamento…</div></div>
-      </div>
+      <div class="card"><div id="lista-impianti"><div class="empty">Caricamento…</div></div></div>
     </div>
   </main>
 </div>
 
-<!-- MODAL DECISIONE COORDINATORE -->
+<!-- MODAL MODIFICA COORDINATORE -->
 <div id="modal-decisione" class="modal-overlay" onclick="chiudiModal('modal-decisione')">
   <div class="modal" onclick="event.stopPropagation()">
-    <h3 id="modal-dec-titolo">Gestisci richiesta</h3>
+    <h3 id="modal-dec-titolo">Modifica richiesta</h3>
     <div id="modal-dec-info" style="font-size:13px;color:var(--muted);margin-bottom:14px"></div>
     <div class="field">
       <label>Data accensione</label>
@@ -453,12 +350,11 @@
       <div class="field"><label>Ora fine</label><input type="time" id="m-ora-f"></div>
     </div>
     <div class="field">
-      <label>Note coordinatore (opzionale)</label>
-      <textarea id="m-note" placeholder="Motivazione modifica o rifiuto…"></textarea>
+      <label>Note coordinatore</label>
+      <textarea id="m-note" placeholder="Motivazione modifica…"></textarea>
     </div>
     <div class="modal-actions">
-      <button class="btn btn-danger" onclick="decidi('RIFIUTATA')">Rifiuta</button>
-      <button class="btn btn-ghost" onclick="decidi('APPROVATA')">Approva</button>
+      <button class="btn btn-ghost" onclick="chiudiModal('modal-decisione')">Annulla</button>
       <button class="btn btn-success" onclick="decidi('MODIFICATA')">Modifica e approva</button>
     </div>
   </div>
@@ -471,15 +367,14 @@
     <div class="field"><label>Username</label><input type="text" id="nu-username"></div>
     <div class="field"><label>PIN</label><input type="text" id="nu-pin" inputmode="numeric"></div>
     <div class="field"><label>Nome completo</label><input type="text" id="nu-nome"></div>
-    <div class="field">
-      <label>Ruolo</label>
+    <div class="field"><label>Ruolo</label>
       <select id="nu-ruolo">
         <option value="utente">Utente</option>
         <option value="coordinatore">Coordinatore</option>
         <option value="superuser">Superuser</option>
       </select>
     </div>
-    <div class="field"><label>Commessa ID</label><select id="nu-commessa"></select></div>
+    <div class="field"><label>Commessa</label><select id="nu-commessa"></select></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="chiudiModal('modal-utente')">Annulla</button>
       <button class="btn btn-primary" onclick="salvaUtente()">Crea utente</button>
@@ -494,13 +389,13 @@
     <input type="hidden" id="eu-username">
     <div class="field"><label>Nome</label><input type="text" id="eu-nome"></div>
     <div class="field"><label>PIN</label><input type="text" id="eu-pin" inputmode="numeric"></div>
-    <div class="field"><label>Commessa ID</label><select id="eu-commessa"></select></div>
+    <div class="field"><label>Commessa</label><select id="eu-commessa"></select></div>
     <div class="field">
       <label>Impianti assegnati (IDs separati da virgola)</label>
       <input type="text" id="eu-impianti" placeholder="IMP-001,IMP-002">
+      <div class="field-note">Copia gli ID dalla tab Impianti</div>
     </div>
-    <div class="field">
-      <label>Stato</label>
+    <div class="field"><label>Stato</label>
       <select id="eu-attivo">
         <option value="true">Attivo</option>
         <option value="false">Disabilitato</option>
@@ -546,17 +441,18 @@
 <div id="toast"></div>
 
 <script>
-// ── CONFIG ──────────────────────────────────────────────
-const API = 'https://aged-union-27fb.davide-cori93.workers.dev'; // <-- sostituisci
+const API = 'https://aged-union-27fb.davide-cori93.workers.dev';
 
-// ── STATE ────────────────────────────────────────────────
 let user = null;
 let tutteRichieste = [];
+let mieRichieste = [];
 let richiestaCorrente = null;
 let commesseCache = [];
 let impiantiCache = [];
+let calMese = new Date().getMonth();
+let calAnno = new Date().getFullYear();
 
-// ── API ──────────────────────────────────────────────────
+// ── API ──────────────────────────────────────────────────────
 async function api(action, body = {}) {
   const res = await fetch(API, {
     method: 'POST',
@@ -566,18 +462,15 @@ async function api(action, body = {}) {
   return res.json();
 }
 
-// ── AUTH ─────────────────────────────────────────────────
+// ── AUTH ─────────────────────────────────────────────────────
 async function doLogin() {
   const username = document.getElementById('inp-username').value.trim();
   const pin      = document.getElementById('inp-pin').value.trim();
   const errEl    = document.getElementById('login-error');
   errEl.style.display = 'none';
-
   if (!username || !pin) { mostraErroreLogin('Inserisci username e PIN'); return; }
-
   const r = await api('login', { username, pin });
   if (!r.ok) { mostraErroreLogin(r.error); return; }
-
   user = r.user;
   document.getElementById('view-login').style.display = 'none';
   avviaApp();
@@ -591,53 +484,48 @@ function mostraErroreLogin(msg) {
 
 function logout() {
   user = null;
-  document.querySelectorAll('.app').forEach(a => a.classList.remove('active'));
+  mieRichieste = [];
+  document.querySelectorAll('.app').forEach(a => { a.classList.remove('active'); a.style.display = ''; });
   document.getElementById('view-login').style.display = 'flex';
   document.getElementById('inp-username').value = '';
   document.getElementById('inp-pin').value = '';
 }
 
-document.getElementById('inp-pin').addEventListener('keydown', e => {
-  if (e.key === 'Enter') doLogin();
-});
+document.getElementById('inp-pin').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 
-// ── ROUTING ──────────────────────────────────────────────
+// ── ROUTING ──────────────────────────────────────────────────
 async function avviaApp() {
   const ruolo = user.ruolo;
-
   if (ruolo === 'utente') {
     document.getElementById('u-nome').textContent = user.nome;
     document.getElementById('app-utente').classList.add('active');
+    document.getElementById('app-utente').style.display = 'flex';
     await caricaImpianti_utente();
-
   } else if (ruolo === 'coordinatore') {
     document.getElementById('c-nome').textContent = user.nome;
     document.getElementById('app-coordinatore').classList.add('active');
+    document.getElementById('app-coordinatore').style.display = 'flex';
     caricaRichiesteCoord('IN_ATTESA');
-
   } else if (ruolo === 'superuser') {
     document.getElementById('s-nome').textContent = user.nome;
     document.getElementById('app-superuser').classList.add('active');
+    document.getElementById('app-superuser').style.display = 'flex';
     caricaTutteRichieste();
-    commesseCache = [];
   }
 }
 
-function showSection(app, sezione) {
-  const prefix = app === 'utente' ? 'utente' : app === 'coord' ? 'coord' : 'super';
-  document.querySelectorAll(`#app-${app === 'coord' ? 'coordinatore' : app === 'super' ? 'superuser' : 'utente'} .section`)
-    .forEach(s => s.classList.remove('active'));
-  document.getElementById(`${prefix}-${sezione}`).classList.add('active');
-
-  document.querySelectorAll(`#app-${app === 'coord' ? 'coordinatore' : app === 'super' ? 'superuser' : 'utente'} .nav-btn`)
-    .forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
+function showSection(appId, sectionId, btn) {
+  document.querySelectorAll(`#${appId} .section`).forEach(s => s.classList.remove('active'));
+  document.getElementById(sectionId).classList.add('active');
+  document.querySelectorAll(`#${appId} .nav-btn`).forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
 }
 
-// ── UTENTE — NUOVA RICHIESTA ──────────────────────────────
+// ── UTENTE — IMPIANTI ─────────────────────────────────────────
 async function caricaImpianti_utente() {
   const r = await api('getMieiImpianti', { username: user.username });
   if (!r.ok) return;
+  impiantiCache = r.impianti;
   const sel = document.getElementById('sel-impianto');
   r.impianti.forEach(imp => {
     const opt = document.createElement('option');
@@ -647,93 +535,219 @@ async function caricaImpianti_utente() {
   });
 }
 
-async function inviaRichiesta() {
-  const impianto_id    = document.getElementById('sel-impianto').value;
-  const data_accensione = document.getElementById('inp-data').value;
-  const ora_inizio     = document.getElementById('inp-ora-i').value;
-  const ora_fine       = document.getElementById('inp-ora-f').value;
-  const motivo         = document.getElementById('inp-motivo').value;
+function aggiornaIdImpianto() {
+  const id  = document.getElementById('sel-impianto').value;
+  const inp = document.getElementById('inp-id-impianto');
+  inp.value = id || '';
+}
 
+// ── UTENTE — NUOVA RICHIESTA ──────────────────────────────────
+async function inviaRichiesta() {
+  const impianto_id     = document.getElementById('sel-impianto').value;
+  const data_accensione = document.getElementById('inp-data').value;
+  const ora_inizio      = document.getElementById('inp-ora-i').value;
+  const ora_fine        = document.getElementById('inp-ora-f').value;
+  const motivo          = document.getElementById('inp-motivo').value;
   if (!impianto_id || !data_accensione || !ora_inizio || !ora_fine) {
     toast('Compila tutti i campi obbligatori'); return;
   }
-
-  const r = await api('creaRichiesta', {
-    username: user.username, impianto_id, data_accensione, ora_inizio, ora_fine, motivo
-  });
-
+  const r = await api('creaRichiesta', { username: user.username, impianto_id, data_accensione, ora_inizio, ora_fine, motivo });
   if (r.ok) {
     toast('Richiesta inviata');
     document.getElementById('inp-data').value   = '';
     document.getElementById('inp-ora-i').value  = '';
     document.getElementById('inp-ora-f').value  = '';
     document.getElementById('inp-motivo').value = '';
+    document.getElementById('sel-impianto').value = '';
+    document.getElementById('inp-id-impianto').value = '';
+    mieRichieste = [];
   } else {
     toast('Errore: ' + r.error);
   }
 }
 
-// ── UTENTE — STORICO ─────────────────────────────────────
+// ── UTENTE — STORICO ──────────────────────────────────────────
 async function caricaStorico() {
-  const r = await api('getMieRichieste', { username: user.username });
-  const el = document.getElementById('lista-storico');
-  if (!r.ok || !r.richieste.length) {
-    el.innerHTML = '<div class="empty">Nessuna richiesta ancora</div>'; return;
+  if (!mieRichieste.length) {
+    const r = await api('getMieRichieste', { username: user.username });
+    mieRichieste = r.ok ? r.richieste.reverse() : [];
   }
-  el.innerHTML = r.richieste.reverse().map(renderRigaStorico).join('');
+  const el = document.getElementById('lista-storico');
+  if (!mieRichieste.length) { el.innerHTML = '<div class="empty">Nessuna richiesta ancora</div>'; return; }
+  el.innerHTML = mieRichieste.map(renderRigaStorico).join('');
 }
 
 function renderRigaStorico(ric) {
   return `<div class="richiesta-row">
     <div class="richiesta-top">
-      <div class="richiesta-titolo">${ric.impianto_nome}</div>
+      <div>
+        <div class="richiesta-titolo">${ric.impianto_nome}</div>
+        <div class="richiesta-id">${ric.impianto_id}</div>
+      </div>
       <span class="stato stato-${ric.stato}">${labelStato(ric.stato)}</span>
     </div>
     <div class="richiesta-meta">${ric.data_accensione} · ${ric.ora_inizio}–${ric.ora_fine}</div>
     ${ric.motivo ? `<div class="richiesta-meta">${ric.motivo}</div>` : ''}
-    ${ric.note_coord ? `<div class="richiesta-meta" style="color:var(--amber)">Nota coord.: ${ric.note_coord}</div>` : ''}
+    ${ric.note_coord ? `<div class="richiesta-meta" style="color:var(--amber)">Nota: ${ric.note_coord}</div>` : ''}
   </div>`;
 }
 
-// ── COORDINATORE ─────────────────────────────────────────
+// ── UTENTE — CALENDARIO ───────────────────────────────────────
+async function renderCalendario() {
+  if (!mieRichieste.length) {
+    const r = await api('getMieRichieste', { username: user.username });
+    mieRichieste = r.ok ? r.richieste : [];
+  }
+  disegnaCalendario();
+}
+
+function cambioMese(delta) {
+  calMese += delta;
+  if (calMese > 11) { calMese = 0; calAnno++; }
+  if (calMese < 0)  { calMese = 11; calAnno--; }
+  disegnaCalendario();
+}
+
+function disegnaCalendario() {
+  const mesi = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+  document.getElementById('cal-titolo').textContent = `${mesi[calMese]} ${calAnno}`;
+
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+
+  const giorni = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
+  giorni.forEach(g => {
+    const el = document.createElement('div');
+    el.className = 'cal-day-name';
+    el.textContent = g;
+    grid.appendChild(el);
+  });
+
+  const primoGiorno = new Date(calAnno, calMese, 1);
+  const ultimoGiorno = new Date(calAnno, calMese + 1, 0);
+  const oggi = new Date();
+
+  let inizioGriglia = new Date(primoGiorno);
+  let dow = primoGiorno.getDay();
+  dow = dow === 0 ? 6 : dow - 1;
+  inizioGriglia.setDate(inizioGriglia.getDate() - dow);
+
+  const richiesteMap = {};
+  mieRichieste.forEach(ric => {
+    const data = normalizzaData(ric.data_accensione);
+    if (!richiesteMap[data]) richiesteMap[data] = [];
+    richiesteMap[data].push(ric);
+  });
+
+  for (let i = 0; i < 42; i++) {
+    const d = new Date(inizioGriglia);
+    d.setDate(d.getDate() + i);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell';
+    if (d.getMonth() !== calMese) cell.classList.add('altro-mese');
+    if (d.toDateString() === oggi.toDateString()) cell.classList.add('oggi');
+
+    const num = document.createElement('div');
+    num.className = 'cal-num';
+    num.textContent = d.getDate();
+    cell.appendChild(num);
+
+    if (richiesteMap[key]) {
+      richiesteMap[key].forEach(ric => {
+        const ev = document.createElement('div');
+        ev.className = `cal-event ${ric.stato}`;
+        ev.textContent = ric.impianto_nome.substring(0, 12) + (ric.impianto_nome.length > 12 ? '…' : '');
+        ev.title = `${ric.impianto_nome} · ${ric.ora_inizio}–${ric.ora_fine}`;
+        ev.onclick = () => mostraDettaglioCalendario(ric);
+        cell.appendChild(ev);
+      });
+    }
+
+    grid.appendChild(cell);
+  }
+}
+
+function normalizzaData(dataStr) {
+  if (!dataStr) return '';
+  if (dataStr.includes('/')) {
+    const [d, m, y] = dataStr.split('/');
+    return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+  }
+  return dataStr;
+}
+
+function mostraDettaglioCalendario(ric) {
+  const el = document.getElementById('cal-dettaglio');
+  el.innerHTML = `<div class="card">
+    <div class="card-body">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-weight:500">${ric.impianto_nome}</div>
+        <span class="stato stato-${ric.stato}">${labelStato(ric.stato)}</span>
+      </div>
+      <div class="richiesta-id" style="margin-bottom:6px">${ric.impianto_id}</div>
+      <div class="richiesta-meta">${ric.data_accensione} · ${ric.ora_inizio}–${ric.ora_fine}</div>
+      ${ric.motivo ? `<div class="richiesta-meta" style="margin-top:4px">${ric.motivo}</div>` : ''}
+      ${ric.note_coord ? `<div class="richiesta-meta" style="color:var(--amber);margin-top:4px">Nota: ${ric.note_coord}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+// ── COORDINATORE ──────────────────────────────────────────────
 async function caricaRichiesteCoord(filtro) {
   const r = await api('getRichiesteCommessa', { username: user.username });
   if (!r.ok) return;
 
   const attesa = r.richieste.filter(x => x.stato === 'IN_ATTESA');
-  document.getElementById('badge-attesa').textContent = attesa.length ? `${attesa.length} da gestire` : '';
+  const badgeEl = document.getElementById('badge-attesa');
+  badgeEl.textContent = attesa.length ? `(${attesa.length})` : '';
 
-  const lista = filtro === 'TUTTE' ? r.richieste : attesa;
+  const lista    = filtro === 'TUTTE' ? r.richieste.reverse() : attesa;
   const targetId = filtro === 'TUTTE' ? 'lista-coord-tutte' : 'lista-coord-attesa';
+  const el       = document.getElementById(targetId);
 
-  const el = document.getElementById(targetId);
-  if (!lista.length) {
-    el.innerHTML = '<div class="empty">Nessuna richiesta</div>'; return;
-  }
-  el.innerHTML = lista.reverse().map(renderRigaCoord).join('');
+  if (!lista.length) { el.innerHTML = '<div class="empty">Nessuna richiesta</div>'; return; }
+  el.innerHTML = lista.map(renderRigaCoord).join('');
 }
 
 function renderRigaCoord(ric) {
   const isAttesa = ric.stato === 'IN_ATTESA';
+  const ricJson  = JSON.stringify(ric).replace(/"/g, '&quot;');
   return `<div class="richiesta-row">
     <div class="richiesta-top">
-      <div class="richiesta-titolo">${ric.impianto_nome}</div>
+      <div>
+        <div class="richiesta-titolo">${ric.impianto_nome}</div>
+        <div class="richiesta-id">${ric.impianto_id}</div>
+      </div>
       <span class="stato stato-${ric.stato}">${labelStato(ric.stato)}</span>
     </div>
     <div class="richiesta-meta">${ric.data_accensione} · ${ric.ora_inizio}–${ric.ora_fine}</div>
-    <div class="richiesta-meta">Richiesto da: ${ric.utente}</div>
+    <div class="richiesta-meta">Richiedente: ${ric.utente}</div>
     ${ric.motivo ? `<div class="richiesta-meta">${ric.motivo}</div>` : ''}
+    ${ric.note_coord ? `<div class="richiesta-meta" style="color:var(--amber)">Nota: ${ric.note_coord}</div>` : ''}
     ${isAttesa ? `<div class="richiesta-azioni">
-      <button class="btn btn-sm btn-success" onclick="apriDecisione(${JSON.stringify(ric).replace(/"/g,'&quot;')})">Gestisci</button>
+      <button class="btn btn-sm btn-success" onclick='decidiDiretto("${ric.id}","APPROVATA","${ric.data_accensione}","${ric.ora_inizio}","${ric.ora_fine}")'>Approva</button>
+      <button class="btn btn-sm btn-danger"  onclick='decidiDiretto("${ric.id}","RIFIUTATA","${ric.data_accensione}","${ric.ora_inizio}","${ric.ora_fine}")'>Rifiuta</button>
+      <button class="btn btn-sm btn-ghost"   onclick='apriDecisione(${ricJson})'>Modifica</button>
     </div>` : ''}
   </div>`;
+}
+
+async function decidiDiretto(id, stato, data_accensione, ora_inizio, ora_fine) {
+  const r = await api('aggiornaStato', { id, stato, note: '', coordinatore: user.username, data_accensione, ora_inizio, ora_fine });
+  if (r.ok) {
+    toast(stato === 'RIFIUTATA' ? 'Rifiutata' : 'Approvata');
+    caricaRichiesteCoord('IN_ATTESA');
+  } else {
+    toast('Errore: ' + r.error);
+  }
 }
 
 function apriDecisione(ric) {
   richiestaCorrente = ric;
   document.getElementById('modal-dec-titolo').textContent = ric.impianto_nome;
-  document.getElementById('modal-dec-info').textContent =
-    `${ric.data_accensione} · ${ric.ora_inizio}–${ric.ora_fine} · ${ric.utente}`;
+  document.getElementById('modal-dec-info').textContent   = `${ric.data_accensione} · ${ric.ora_inizio}–${ric.ora_fine} · ${ric.utente}`;
   document.getElementById('m-data').value  = ric.data_accensione;
   document.getElementById('m-ora-i').value = ric.ora_inizio;
   document.getElementById('m-ora-f').value = ric.ora_fine;
@@ -752,17 +766,16 @@ async function decidi(stato) {
     ora_inizio:      document.getElementById('m-ora-i').value,
     ora_fine:        document.getElementById('m-ora-f').value,
   });
-
   chiudiModal('modal-decisione');
   if (r.ok) {
-    toast(stato === 'RIFIUTATA' ? 'Rifiutata' : 'Approvata');
+    toast('Modificata e approvata');
     caricaRichiesteCoord('IN_ATTESA');
   } else {
     toast('Errore: ' + r.error);
   }
 }
 
-// ── SUPERUSER — RICHIESTE ────────────────────────────────
+// ── SUPERUSER — RICHIESTE ─────────────────────────────────────
 async function caricaTutteRichieste() {
   const r = await api('getAllRichieste');
   tutteRichieste = r.ok ? r.richieste.reverse() : [];
@@ -781,7 +794,10 @@ function renderSuperRichieste(filtro) {
   if (!list.length) { el.innerHTML = '<div class="empty">Nessuna richiesta</div>'; return; }
   el.innerHTML = list.map(ric => `<div class="richiesta-row">
     <div class="richiesta-top">
-      <div class="richiesta-titolo">${ric.impianto_nome}</div>
+      <div>
+        <div class="richiesta-titolo">${ric.impianto_nome}</div>
+        <div class="richiesta-id">${ric.impianto_id}</div>
+      </div>
       <span class="stato stato-${ric.stato}">${labelStato(ric.stato)}</span>
     </div>
     <div class="richiesta-meta">${ric.commessa_id} · ${ric.data_accensione} · ${ric.ora_inizio}–${ric.ora_fine}</div>
@@ -790,9 +806,9 @@ function renderSuperRichieste(filtro) {
   </div>`).join('');
 }
 
-// ── SUPERUSER — UTENTI ────────────────────────────────────
+// ── SUPERUSER — UTENTI ────────────────────────────────────────
 async function caricaUtenti() {
-  const r = await api('getUtenti');
+  const r  = await api('getUtenti');
   const el = document.getElementById('lista-utenti');
   if (!r.ok) { el.innerHTML = '<div class="empty">Errore</div>'; return; }
   el.innerHTML = r.utenti.map(u => `<div class="richiesta-row">
@@ -800,11 +816,11 @@ async function caricaUtenti() {
       <div>
         <div class="richiesta-titolo">${u.nome || u.username} <small style="color:var(--muted);font-weight:400">(${u.username})</small></div>
         <div class="richiesta-meta">${u.commessa_id || '—'} · PIN: ${u.pin || '—'}</div>
-        ${u.impianti_ids ? `<div class="richiesta-meta">Impianti: ${u.impianti_ids}</div>` : ''}
+        ${u.impianti_ids ? `<div class="richiesta-meta" style="font-size:12px">Impianti: ${u.impianti_ids}</div>` : ''}
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
         <span class="badge-role role-${u.ruolo}">${u.ruolo}</span>
-        <span style="font-size:12px;color:${u.attivo === 'TRUE' || u.attivo === true ? 'var(--green)' : 'var(--red)'}">${u.attivo === 'TRUE' || u.attivo === true ? 'Attivo' : 'Disabilitato'}</span>
+        <span style="font-size:12px;color:${u.attivo==='TRUE'||u.attivo===true?'var(--green)':'var(--red)'}">${u.attivo==='TRUE'||u.attivo===true?'Attivo':'Disabilitato'}</span>
         <button class="btn btn-ghost btn-sm" onclick='apriModificaUtente(${JSON.stringify(u).replace(/'/g,"&#39;")})'>Modifica</button>
       </div>
     </div>
@@ -831,31 +847,31 @@ async function salvaUtente() {
 
 function apriModificaUtente(u) {
   popolaSelectCommesse('eu-commessa', u.commessa_id);
-  document.getElementById('eu-username').value  = u.username;
-  document.getElementById('eu-nome').value      = u.nome || '';
-  document.getElementById('eu-pin').value       = u.pin || '';
-  document.getElementById('eu-impianti').value  = u.impianti_ids || '';
-  document.getElementById('eu-attivo').value    = (u.attivo === true || u.attivo === 'TRUE') ? 'true' : 'false';
+  document.getElementById('eu-username').value = u.username;
+  document.getElementById('eu-nome').value     = u.nome || '';
+  document.getElementById('eu-pin').value      = u.pin || '';
+  document.getElementById('eu-impianti').value = u.impianti_ids || '';
+  document.getElementById('eu-attivo').value   = (u.attivo===true||u.attivo==='TRUE') ? 'true' : 'false';
   document.getElementById('modal-utente-edit').classList.add('open');
 }
 
 async function salvaModificaUtente() {
   const r = await api('aggiornaUtente', {
-    username:    document.getElementById('eu-username').value,
-    nome:        document.getElementById('eu-nome').value,
-    pin:         document.getElementById('eu-pin').value,
-    commessa_id: document.getElementById('eu-commessa').value,
-    impianti_ids:document.getElementById('eu-impianti').value,
-    attivo:      document.getElementById('eu-attivo').value === 'true',
+    username:     document.getElementById('eu-username').value,
+    nome:         document.getElementById('eu-nome').value,
+    pin:          document.getElementById('eu-pin').value,
+    commessa_id:  document.getElementById('eu-commessa').value,
+    impianti_ids: document.getElementById('eu-impianti').value,
+    attivo:       document.getElementById('eu-attivo').value === 'true',
   });
   chiudiModal('modal-utente-edit');
   if (r.ok) { toast('Utente aggiornato'); caricaUtenti(); }
   else toast('Errore: ' + r.error);
 }
 
-// ── SUPERUSER — COMMESSE ──────────────────────────────────
+// ── SUPERUSER — COMMESSE ──────────────────────────────────────
 async function caricaCommesse() {
-  const r = await api('getCommesse');
+  const r  = await api('getCommesse');
   commesseCache = r.ok ? r.commesse : [];
   const el = document.getElementById('lista-commesse');
   if (!commesseCache.length) { el.innerHTML = '<div class="empty">Nessuna commessa</div>'; return; }
@@ -866,9 +882,7 @@ async function caricaCommesse() {
   </div>`).join('');
 }
 
-function apriModalCommessa() {
-  document.getElementById('modal-commessa').classList.add('open');
-}
+function apriModalCommessa() { document.getElementById('modal-commessa').classList.add('open'); }
 
 async function salvaCommessa() {
   const r = await api('creaCommessa', {
@@ -882,9 +896,9 @@ async function salvaCommessa() {
   else toast('Errore: ' + r.error);
 }
 
-// ── SUPERUSER — IMPIANTI ──────────────────────────────────
+// ── SUPERUSER — IMPIANTI ──────────────────────────────────────
 async function caricaImpianti() {
-  const r = await api('getImpianti');
+  const r  = await api('getImpianti');
   impiantiCache = r.ok ? r.impianti : [];
   const el = document.getElementById('lista-impianti');
   if (!impiantiCache.length) { el.innerHTML = '<div class="empty">Nessun impianto</div>'; return; }
@@ -892,7 +906,7 @@ async function caricaImpianti() {
     <div class="richiesta-titolo">${i.nome}</div>
     <div class="richiesta-meta">${i.indirizzo} · ${i.comune}</div>
     <div class="richiesta-meta">Commessa: ${i.commessa_id}</div>
-    <div class="richiesta-meta" style="font-family:monospace;font-size:12px">${i.id}</div>
+    <div class="richiesta-id">${i.id}</div>
   </div>`).join('');
 }
 
@@ -913,7 +927,7 @@ async function salvaImpianto() {
   else toast('Errore: ' + r.error);
 }
 
-// ── HELPERS ──────────────────────────────────────────────
+// ── HELPERS ───────────────────────────────────────────────────
 async function popolaSelectCommesse(selectId, selected) {
   if (!commesseCache.length) {
     const r = await api('getCommesse');
@@ -921,16 +935,13 @@ async function popolaSelectCommesse(selectId, selected) {
   }
   const sel = document.getElementById(selectId);
   sel.innerHTML = '<option value="">— Nessuna —</option>' +
-    commesseCache.map(c => `<option value="${c.id}" ${c.id === selected ? 'selected' : ''}>${c.nome} (${c.id})</option>`).join('');
+    commesseCache.map(c => `<option value="${c.id}" ${c.id===selected?'selected':''}>${c.nome} (${c.id})</option>`).join('');
 }
 
-function chiudiModal(id) {
-  document.getElementById(id).classList.remove('open');
-}
+function chiudiModal(id) { document.getElementById(id).classList.remove('open'); }
 
 function labelStato(s) {
-  const map = { IN_ATTESA:'In attesa', APPROVATA:'Approvata', MODIFICATA:'Approvata', RIFIUTATA:'Rifiutata' };
-  return map[s] || s;
+  return { IN_ATTESA:'In attesa', APPROVATA:'Approvata', MODIFICATA:'Approvata', RIFIUTATA:'Rifiutata' }[s] || s;
 }
 
 let toastTimer;
