@@ -616,25 +616,26 @@ async function inviaRichiesta() {
     if (ini && fin) fasce.push({ ora_inizio: ini, ora_fine: fin });
   });
 
-  if (!fasce.length) {
-    toast('Inserisci almeno una fascia oraria'); return;
-  }
+  if (!fasce.length) { toast('Inserisci almeno una fascia oraria'); return; }
 
-  let ok = true;
-  for (const fascia of fasce) {
-    const r = await api('creaRichiesta', {
-      username: user.username, impianto_id, data_accensione,
-      ora_inizio: fascia.ora_inizio, ora_fine: fascia.ora_fine, motivo
-    });
-    if (!r.ok) { ok = false; toast('Errore: ' + r.error); break; }
-  }
+  const r = await api('creaRichiesta', {
+    username:    user.username,
+    impianto_id,
+    data_accensione,
+    ora_inizio:  fasce[0].ora_inizio,
+    ora_fine:    fasce[0].ora_fine,
+    motivo,
+    fasce_extra: fasce.slice(1),
+  });
 
-  if (ok) {
-    toast(fasce.length > 1 ? `${fasce.length} richieste inviate` : 'Richiesta inviata');
+  if (r.ok) {
+    toast('Richiesta inviata');
     chiudiModal('modal-nuova-richiesta');
     mieRichieste = [];
     await caricaMieRichieste();
     disegnaCalendario();
+  } else {
+    toast('Errore: ' + r.error);
   }
 }
 
@@ -647,6 +648,13 @@ async function caricaStorico() {
   el.innerHTML = lista.map(renderRigaStorico).join('');
 }
 
+function fasceSuppHtml(ric) {
+  if (!ric.fasce_extra || !ric.fasce_extra.length) return '';
+  return ric.fasce_extra.map(f =>
+    `<div class="richiesta-meta" style="padding-left:10px;border-left:2px solid var(--border)">${f.ora_inizio}–${f.ora_fine}</div>`
+  ).join('');
+}
+
 function renderRigaStorico(ric) {
   return `<div class="richiesta-row">
     <div class="richiesta-top">
@@ -657,6 +665,7 @@ function renderRigaStorico(ric) {
       <span class="stato stato-${ric.stato}">${labelStato(ric.stato)}</span>
     </div>
     <div class="richiesta-meta">${ric.data_accensione} · ${ric.ora_inizio}–${ric.ora_fine}</div>
+    ${fasceSuppHtml(ric)}
     ${ric.motivo ? `<div class="richiesta-meta">${ric.motivo}</div>` : ''}
     ${ric.note_coord ? `<div class="richiesta-meta" style="color:var(--amber)">Nota: ${ric.note_coord}</div>` : ''}
   </div>`;
@@ -727,11 +736,15 @@ function disegnaCalendario() {
 
 function mostraEventoModal(ric) {
   document.getElementById('ev-titolo').textContent = ric.impianto_nome;
+  const fasceHtml = ric.fasce_extra && ric.fasce_extra.length
+    ? ric.fasce_extra.map(f => `<div style="padding-left:10px;border-left:2px solid var(--border)">${f.ora_inizio}–${f.ora_fine}</div>`).join('')
+    : '';
   document.getElementById('ev-body').innerHTML = `
     <div style="margin-bottom:4px"><span class="stato stato-${ric.stato}">${labelStato(ric.stato)}</span></div>
     <div style="font-family:monospace;font-size:12px;margin-bottom:8px">${ric.impianto_id}</div>
     <div><strong>Data:</strong> ${ric.data_accensione}</div>
     <div><strong>Orario:</strong> ${ric.ora_inizio} – ${ric.ora_fine}</div>
+    ${fasceHtml}
     ${ric.motivo ? `<div><strong>Motivo:</strong> ${ric.motivo}</div>` : ''}
     ${ric.note_coord ? `<div style="color:var(--amber);margin-top:6px"><strong>Nota coordinatore:</strong> ${ric.note_coord}</div>` : ''}
     <div style="margin-top:4px;font-size:12px;color:var(--muted)">Richiedente: ${ric.utente}</div>
@@ -773,6 +786,7 @@ function renderRigaCoord(ric) {
       <span class="stato stato-${ric.stato}">${labelStato(ric.stato)}</span>
     </div>
     <div class="richiesta-meta">${ric.data_accensione} · ${ric.ora_inizio}–${ric.ora_fine}</div>
+    ${fasceSuppHtml(ric)}
     <div class="richiesta-meta">Richiedente: ${ric.utente}</div>
     ${ric.motivo ? `<div class="richiesta-meta">${ric.motivo}</div>` : ''}
     ${ric.note_coord ? `<div class="richiesta-meta" style="color:var(--amber)">Nota: ${ric.note_coord}</div>` : ''}
