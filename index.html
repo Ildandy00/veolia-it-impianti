@@ -473,11 +473,7 @@ let commesseCache     = [];
 let impiantiCache     = [];
 let calMese           = new Date().getMonth();
 let calAnno           = new Date().getFullYear();
- 
-function fasceSuppHtml(ric) {
-  if (!ric.ora_inizio_f2 || !ric.ora_fine_f2) return '';
-  return `<div class="richiesta-meta" style="padding-left:10px;border-left:2px solid var(--border)">${ric.ora_inizio_f2}–${ric.ora_fine_f2}</div>`;
-}
+
 // ── API ──────────────────────────────────────────────────────
 async function api(action, body = {}) {
   const res = await fetch(API, {
@@ -487,11 +483,7 @@ async function api(action, body = {}) {
   });
   return res.json();
 }
-function apriDecisione(ric) {
-  console.log('RICHIESTA:', ric);
-  richiestaCorrente = ric;
-  // ...resto del codice
-}
+
 // ── AUTH ─────────────────────────────────────────────────────
 async function doLogin() {
   const username = document.getElementById('inp-username').value.trim();
@@ -666,6 +658,10 @@ async function caricaStorico() {
   el.innerHTML = lista.map(renderRigaStorico).join('');
 }
 
+function fasceSuppHtml(ric) {
+  if (!ric.ora_inizio_f2 || !ric.ora_fine_f2) return '';
+  return `<div class="richiesta-meta" style="padding-left:10px;border-left:2px solid var(--border)">${ric.ora_inizio_f2}–${ric.ora_fine_f2}</div>`;
+}
 
 function renderRigaStorico(ric) {
   const nome = ric.utente_nome || ric.utente;
@@ -677,11 +673,7 @@ function renderRigaStorico(ric) {
       </div>
       <span class="stato stato-${ric.stato}">${labelStato(ric.stato)}</span>
     </div>
-    <div class="richiesta-meta" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-  <span>${ric.data_accensione}</span>
-  <span style="display:inline-block;padding:3px 10px;border-radius:6px;background:var(--accent-l);color:var(--accent);font-weight:600;font-size:13px">${ric.ora_inizio}–${ric.ora_fine}</span>
-  ${ric.ora_inizio_f2 && ric.ora_fine_f2 ? `<span style="display:inline-block;padding:3px 10px;border-radius:6px;background:var(--accent-l);color:var(--accent);font-weight:600;font-size:13px">${ric.ora_inizio_f2}–${ric.ora_fine_f2}</span>` : ''}
-</div>
+    <div class="richiesta-meta">${ric.data_accensione} · ${ric.ora_inizio}–${ric.ora_fine}</div>
     ${fasceSuppHtml(ric)}
     ${ric.motivo ? `<div class="richiesta-meta">${ric.motivo}</div>` : ''}
     ${nome !== user.username ? `<div class="richiesta-meta">Richiedente: ${nome}</div>` : ''}
@@ -781,9 +773,12 @@ function normalizzaData(dataStr) {
 }
 
 // ── COORDINATORE ──────────────────────────────────────────────
+let richiesteCoordCache = [];
+
 async function caricaRichiesteCoord(filtro) {
   const r = await api('getRichiesteCommessa', { username: user.username });
   if (!r.ok) return;
+  richiesteCoordCache = r.richieste;
   const attesa   = r.richieste.filter(x => x.stato === 'IN_ATTESA');
   document.getElementById('badge-attesa').textContent = attesa.length ? `(${attesa.length})` : '';
   const lista    = filtro === 'TUTTE' ? [...r.richieste].reverse() : attesa;
@@ -795,8 +790,10 @@ async function caricaRichiesteCoord(filtro) {
 
 function renderRigaCoord(ric) {
   const isAttesa = ric.stato === 'IN_ATTESA';
-  const ricJson  = JSON.stringify(ric).replace(/"/g, '&quot;');
   const nome     = ric.utente_nome || ric.utente;
+  const f2Html   = (ric.ora_inizio_f2 && ric.ora_fine_f2)
+    ? `<span style="display:inline-block;padding:3px 10px;border-radius:6px;background:var(--accent-l);color:var(--accent);font-weight:600;font-size:13px">${ric.ora_inizio_f2}–${ric.ora_fine_f2}</span>`
+    : '';
   return `<div class="richiesta-row">
     <div class="richiesta-top">
       <div>
@@ -805,25 +802,42 @@ function renderRigaCoord(ric) {
       </div>
       <span class="stato stato-${ric.stato}">${labelStato(ric.stato)}</span>
     </div>
-   <div class="richiesta-meta" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-  <span>${ric.data_accensione}</span>
-  <span style="display:inline-block;padding:3px 10px;border-radius:6px;background:var(--accent-l);color:var(--accent);font-weight:600;font-size:13px">${ric.ora_inizio}–${ric.ora_fine}</span>
-  ${ric.ora_inizio_f2 && ric.ora_fine_f2 ? `<span style="display:inline-block;padding:3px 10px;border-radius:6px;background:var(--accent-l);color:var(--accent);font-weight:600;font-size:13px">${ric.ora_inizio_f2}–${ric.ora_fine_f2}</span>` : ''}
-</div>
-    ${fasceSuppHtml(ric)}
+    <div class="richiesta-meta" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <span>${ric.data_accensione}</span>
+      <span style="display:inline-block;padding:3px 10px;border-radius:6px;background:var(--accent-l);color:var(--accent);font-weight:600;font-size:13px">${ric.ora_inizio}–${ric.ora_fine}</span>
+      ${f2Html}
+    </div>
     <div class="richiesta-meta">Richiedente: ${nome}</div>
     ${ric.motivo ? `<div class="richiesta-meta">${ric.motivo}</div>` : ''}
     ${ric.note_coord ? `<div class="richiesta-meta" style="color:var(--amber)">Nota: ${ric.note_coord}</div>` : ''}
     ${isAttesa ? `<div class="richiesta-azioni">
-      <button class="btn btn-sm btn-success" onclick='decidiDiretto("${ric.id}","APPROVATA","${ric.data_accensione}","${ric.ora_inizio}","${ric.ora_fine}")'>Approva</button>
-      <button class="btn btn-sm btn-danger"  onclick='decidiDiretto("${ric.id}","RIFIUTATA","${ric.data_accensione}","${ric.ora_inizio}","${ric.ora_fine}")'>Rifiuta</button>
-      <button class="btn btn-sm btn-ghost"   onclick='apriDecisione(${ricJson})'>Modifica</button>
+      <button class="btn btn-sm btn-success" onclick="decidiDirettoById('${ric.id}','APPROVATA')">Approva</button>
+      <button class="btn btn-sm btn-danger"  onclick="decidiDirettoById('${ric.id}','RIFIUTATA')">Rifiuta</button>
+      <button class="btn btn-sm btn-ghost"   onclick="apriDecisioneById('${ric.id}')">Modifica</button>
     </div>` : ''}
   </div>`;
 }
 
-async function decidiDiretto(id, stato, data_accensione, ora_inizio, ora_fine) {
-  const r = await api('aggiornaStato', { id, stato, note: '', coordinatore: user.username, data_accensione, ora_inizio, ora_fine });
+function apriDecisioneById(id) {
+  const ric = richiesteCoordCache.find(r => r.id === id);
+  if (!ric) { toast('Richiesta non trovata'); return; }
+  apriDecisione(ric);
+}
+
+async function decidiDirettoById(id, stato) {
+  const ric = richiesteCoordCache.find(r => r.id === id);
+  if (!ric) { toast('Richiesta non trovata'); return; }
+  const r = await api('aggiornaStato', {
+    id:              ric.id,
+    stato,
+    note:            '',
+    coordinatore:    user.username,
+    data_accensione: ric.data_accensione,
+    ora_inizio:      ric.ora_inizio,
+    ora_fine:        ric.ora_fine,
+    ora_inizio_f2:   ric.ora_inizio_f2 || '',
+    ora_fine_f2:     ric.ora_fine_f2   || '',
+  });
   if (r.ok) {
     toast(stato === 'RIFIUTATA' ? 'Rifiutata' : 'Approvata');
     caricaRichiesteCoord('IN_ATTESA');
@@ -834,24 +848,30 @@ async function decidiDiretto(id, stato, data_accensione, ora_inizio, ora_fine) {
 
 function apriDecisione(ric) {
   richiestaCorrente = ric;
+  const nome = ric.utente_nome || ric.utente;
   document.getElementById('modal-dec-titolo').textContent = ric.impianto_nome;
-  document.getElementById('modal-dec-info').textContent   = `${ric.data_accensione} · ${ric.ora_inizio}–${ric.ora_fine} · ${ric.utente}`;
-  document.getElementById('m-data').value  = ric.data_accensione;
-  document.getElementById('m-ora-i').value = ric.ora_inizio;
-  document.getElementById('m-ora-f').value = ric.ora_fine;
-  document.getElementById('m-note').value  = '';
+  document.getElementById('modal-dec-info').textContent   = `${ric.data_accensione} · ${ric.ora_inizio}–${ric.ora_fine} · ${nome}`;
+  document.getElementById('m-data').value   = ric.data_accensione;
+  document.getElementById('m-ora-i').value  = ric.ora_inizio;
+  document.getElementById('m-ora-f').value  = ric.ora_fine;
+  document.getElementById('m-ora-i2').value = ric.ora_inizio_f2 || '';
+  document.getElementById('m-ora-f2').value = ric.ora_fine_f2   || '';
+  document.getElementById('m-note').value   = '';
   document.getElementById('modal-decisione').classList.add('open');
 }
 
 async function decidi(stato) {
   if (!richiestaCorrente) return;
   const r = await api('aggiornaStato', {
-    id: richiestaCorrente.id, stato,
-    note: document.getElementById('m-note').value,
-    coordinatore: user.username,
+    id:              richiestaCorrente.id,
+    stato,
+    note:            document.getElementById('m-note').value,
+    coordinatore:    user.username,
     data_accensione: document.getElementById('m-data').value,
-    ora_inizio: document.getElementById('m-ora-i').value,
-    ora_fine: document.getElementById('m-ora-f').value,
+    ora_inizio:      document.getElementById('m-ora-i').value,
+    ora_fine:        document.getElementById('m-ora-f').value,
+    ora_inizio_f2:   document.getElementById('m-ora-i2').value,
+    ora_fine_f2:     document.getElementById('m-ora-f2').value,
   });
   chiudiModal('modal-decisione');
   if (r.ok) { toast('Modificata e approvata'); caricaRichiesteCoord('IN_ATTESA'); }
