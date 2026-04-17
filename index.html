@@ -658,10 +658,6 @@ async function caricaStorico() {
   el.innerHTML = lista.map(renderRigaStorico).join('');
 }
 
-function fasceSuppHtml(ric) {
-  if (!ric.ora_inizio_f2 || !ric.ora_fine_f2) return '';
-  return `<div class="richiesta-meta" style="padding-left:10px;border-left:2px solid var(--border)">${ric.ora_inizio_f2}–${ric.ora_fine_f2}</div>`;
-}
 
 function renderRigaStorico(ric) {
   const nome = ric.utente_nome || ric.utente;
@@ -673,7 +669,11 @@ function renderRigaStorico(ric) {
       </div>
       <span class="stato stato-${ric.stato}">${labelStato(ric.stato)}</span>
     </div>
-    <div class="richiesta-meta">${ric.data_accensione} · ${ric.ora_inizio}–${ric.ora_fine}</div>
+    <div class="richiesta-meta" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+  <span>${ric.data_accensione}</span>
+  <span style="display:inline-block;padding:3px 10px;border-radius:6px;background:var(--accent-l);color:var(--accent);font-weight:600;font-size:13px">${ric.ora_inizio}–${ric.ora_fine}</span>
+  ${ric.ora_inizio_f2 && ric.ora_fine_f2 ? `<span style="display:inline-block;padding:3px 10px;border-radius:6px;background:var(--accent-l);color:var(--accent);font-weight:600;font-size:13px">${ric.ora_inizio_f2}–${ric.ora_fine_f2}</span>` : ''}
+</div>
     ${fasceSuppHtml(ric)}
     ${ric.motivo ? `<div class="richiesta-meta">${ric.motivo}</div>` : ''}
     ${nome !== user.username ? `<div class="richiesta-meta">Richiedente: ${nome}</div>` : ''}
@@ -797,7 +797,11 @@ function renderRigaCoord(ric) {
       </div>
       <span class="stato stato-${ric.stato}">${labelStato(ric.stato)}</span>
     </div>
-    <div class="richiesta-meta">${ric.data_accensione} · ${ric.ora_inizio}–${ric.ora_fine}</div>
+   <div class="richiesta-meta" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+  <span>${ric.data_accensione}</span>
+  <span style="display:inline-block;padding:3px 10px;border-radius:6px;background:var(--accent-l);color:var(--accent);font-weight:600;font-size:13px">${ric.ora_inizio}–${ric.ora_fine}</span>
+  ${ric.ora_inizio_f2 && ric.ora_fine_f2 ? `<span style="display:inline-block;padding:3px 10px;border-radius:6px;background:var(--accent-l);color:var(--accent);font-weight:600;font-size:13px">${ric.ora_inizio_f2}–${ric.ora_fine_f2}</span>` : ''}
+</div>
     ${fasceSuppHtml(ric)}
     <div class="richiesta-meta">Richiedente: ${nome}</div>
     ${ric.motivo ? `<div class="richiesta-meta">${ric.motivo}</div>` : ''}
