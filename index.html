@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Accensioni Straordinarie</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -88,6 +90,11 @@
   .richiesta-azioni { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
 
   /* ── Fasce orarie ── */
+  .btn-refresh { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 6px 8px; border-radius: 8px; cursor: pointer; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; transition: all .15s; }
+  .btn-refresh:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-l); }
+  .btn-refresh.spinning svg { animation: spin 0.6s linear infinite; }
+  @keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+
   .fascia-wrap { background: var(--bg); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; position: relative; }
   .fascia-label { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 8px; }
   .fascia-del { position: absolute; top: 8px; right: 8px; background: var(--red-l); color: var(--red); border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; font-size: 15px; line-height: 1; padding: 0; display: flex; align-items: center; justify-content: center; }
@@ -188,6 +195,9 @@
     <div class="user-chip">
       <span id="u-nome"></span>
       <span class="badge-role role-utente">Utente</span>
+      <button class="btn-refresh" onclick="aggiornaApp()" title="Aggiorna">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      </button>
       <button class="btn btn-ghost btn-sm" onclick="logout()">Esci</button>
     </div>
   </header>
@@ -195,6 +205,7 @@
     <div class="nav-utente-tabs">
       <button class="nav-btn active" onclick="showSection('app-utente','utente-calendario',this); disegnaCalendario()">Calendario</button>
       <button class="nav-btn" onclick="showSection('app-utente','utente-storico',this); caricaStorico()">Storico</button>
+      <button class="nav-btn" onclick="showSection('app-utente','utente-report',this)">Report</button>
     </div>
     <button class="btn btn-primary btn-sm" onclick="apriModalNuovaRichiesta(null)">+ Nuova richiesta</button>
   </div>
@@ -221,6 +232,24 @@
         <div id="lista-storico"><div class="empty">Caricamento…</div></div>
       </div>
     </div>
+
+    <!-- Report -->
+    <div id="utente-report" class="section">
+      <div class="card">
+        <div class="card-header">Report richieste approvate</div>
+        <div class="card-body">
+          <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Genera un PDF con l'elenco delle richieste approvate nel periodo selezionato.</p>
+          <div class="row-2">
+            <div class="field"><label>Dal</label><input type="date" id="rep-dal"></div>
+            <div class="field"><label>Al</label><input type="date" id="rep-al"></div>
+          </div>
+          <button class="btn btn-primary btn-full" onclick="generaReportUtente()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+            Scarica PDF
+          </button>
+        </div>
+      </div>
+    </div>
   </main>
 </div>
 
@@ -234,6 +263,9 @@
     <div class="user-chip">
       <span id="c-nome"></span>
       <span class="badge-role role-coordinatore">Coord.</span>
+      <button class="btn-refresh" onclick="aggiornaApp()" title="Aggiorna">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      </button>
       <button class="btn btn-ghost btn-sm" onclick="logout()">Esci</button>
     </div>
   </header>
@@ -267,6 +299,9 @@
     <div class="user-chip">
       <span id="s-nome"></span>
       <span class="badge-role role-superuser">Admin</span>
+      <button class="btn-refresh" onclick="aggiornaApp()" title="Aggiorna">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      </button>
       <button class="btn btn-ghost btn-sm" onclick="logout()">Esci</button>
     </div>
   </header>
@@ -761,6 +796,131 @@ function mostraEventoModal(ric) {
     <div style="margin-top:4px;font-size:12px;color:var(--muted)">Richiedente: ${nome}</div>
   `;
   document.getElementById('modal-evento').classList.add('open');
+}
+
+// ── REFRESH ──────────────────────────────────────────────────
+async function aggiornaApp() {
+  const btns = document.querySelectorAll('.btn-refresh');
+  btns.forEach(b => b.classList.add('spinning'));
+  try {
+    if (user.ruolo === 'utente') {
+      await caricaImpianti_utente();
+      mieRichieste = [];
+      await caricaMieRichieste();
+      disegnaCalendario();
+      const storicoSect = document.getElementById('utente-storico');
+      if (storicoSect.classList.contains('active')) caricaStorico();
+    } else if (user.ruolo === 'coordinatore') {
+      const attesaActive = document.getElementById('coord-attesa').classList.contains('active');
+      caricaRichiesteCoord(attesaActive ? 'IN_ATTESA' : 'TUTTE');
+    } else if (user.ruolo === 'superuser') {
+      richiesteApprSuper = [];
+      tutteRichieste     = [];
+      commesseCache      = [];
+      impiantiCache      = [];
+      if (document.getElementById('super-calendario').classList.contains('active')) {
+        await disegnaCalendarioSuper();
+      } else if (document.getElementById('super-richieste').classList.contains('active')) {
+        caricaTutteRichieste();
+      } else if (document.getElementById('super-utenti').classList.contains('active')) {
+        caricaUtenti();
+      } else if (document.getElementById('super-commesse').classList.contains('active')) {
+        caricaCommesse();
+      } else if (document.getElementById('super-impianti').classList.contains('active')) {
+        caricaImpianti();
+      }
+    }
+    toast('Aggiornato');
+  } catch(e) {
+    toast('Errore: ' + e.message);
+  } finally {
+    setTimeout(() => btns.forEach(b => b.classList.remove('spinning')), 500);
+  }
+}
+
+// ── REPORT PDF UTENTE ────────────────────────────────────────
+async function generaReportUtente() {
+  const dal = document.getElementById('rep-dal').value;
+  const al  = document.getElementById('rep-al').value;
+  if (!dal || !al) { toast('Seleziona periodo dal/al'); return; }
+  if (dal > al)    { toast('Date non valide'); return; }
+
+  if (!mieRichieste.length) await caricaMieRichieste();
+  const approvate = mieRichieste.filter(r => {
+    if (r.stato !== 'APPROVATA' && r.stato !== 'MODIFICATA') return false;
+    const d = normalizzaData(r.data_accensione);
+    return d >= dal && d <= al;
+  });
+
+  if (!approvate.length) { toast('Nessuna richiesta approvata nel periodo'); return; }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+  // intestazione
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Report richieste accensioni approvate', 14, 16);
+
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(100);
+  doc.text(`Utente: ${user.nome}`, 14, 23);
+  doc.text(`Periodo: ${formatDateIT(dal)} — ${formatDateIT(al)}`, 14, 28);
+  doc.text(`Generato il: ${formatDateIT(new Date().toISOString().slice(0,10))} · ${approvate.length} richieste`, 14, 33);
+  doc.setTextColor(0);
+
+  // tabella
+  const head = [['Data', 'Impianto', 'ID', 'Fascia 1', 'Fascia 2', 'Motivo', 'Coord.']];
+  const body = approvate
+    .sort((a,b) => normalizzaData(a.data_accensione).localeCompare(normalizzaData(b.data_accensione)))
+    .map(r => [
+      formatDateIT(normalizzaData(r.data_accensione)),
+      r.impianto_nome,
+      r.impianto_id,
+      `${r.ora_inizio}–${r.ora_fine}`,
+      r.ora_inizio_f2 && r.ora_fine_f2 ? `${r.ora_inizio_f2}–${r.ora_fine_f2}` : '—',
+      r.motivo || '—',
+      r.coordinatore || '—',
+    ]);
+
+  doc.autoTable({
+    startY: 40,
+    head, body,
+    theme: 'striped',
+    headStyles: { fillColor: [26, 95, 180], textColor: 255, fontSize: 10 },
+    bodyStyles: { fontSize: 9 },
+    alternateRowStyles: { fillColor: [245, 245, 240] },
+    columnStyles: {
+      0: { cellWidth: 25 },
+      1: { cellWidth: 60 },
+      2: { cellWidth: 22 },
+      3: { cellWidth: 26 },
+      4: { cellWidth: 26 },
+      5: { cellWidth: 60 },
+      6: { cellWidth: 40 },
+    },
+  });
+
+  // footer
+  const pages = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= pages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(150);
+    doc.text(`Veolia Italia — Accensioni straordinarie · Pagina ${i}/${pages}`,
+      doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 8, { align: 'center' });
+  }
+
+  const filename = `Report_${user.username}_${dal}_${al}.pdf`;
+  doc.save(filename);
+  toast('Report scaricato');
+}
+
+function formatDateIT(isoDate) {
+  if (!isoDate) return '';
+  const [y, m, d] = isoDate.split('-');
+  return `${d}/${m}/${y}`;
 }
 
 function normalizzaData(dataStr) {
