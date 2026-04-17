@@ -487,7 +487,11 @@ async function api(action, body = {}) {
   });
   return res.json();
 }
-
+function apriDecisione(ric) {
+  console.log('RICHIESTA:', ric);
+  richiestaCorrente = ric;
+  // ...resto del codice
+}
 // ── AUTH ─────────────────────────────────────────────────────
 async function doLogin() {
   const username = document.getElementById('inp-username').value.trim();
