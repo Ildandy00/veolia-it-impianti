@@ -473,7 +473,11 @@ let commesseCache     = [];
 let impiantiCache     = [];
 let calMese           = new Date().getMonth();
 let calAnno           = new Date().getFullYear();
-
+ 
+function fasceSuppHtml(ric) {
+  if (!ric.ora_inizio_f2 || !ric.ora_fine_f2) return '';
+  return `<div class="richiesta-meta" style="padding-left:10px;border-left:2px solid var(--border)">${ric.ora_inizio_f2}–${ric.ora_fine_f2}</div>`;
+}
 // ── API ──────────────────────────────────────────────────────
 async function api(action, body = {}) {
   const res = await fetch(API, {
