@@ -440,6 +440,13 @@
       </select>
     </div>
     <div class="field"><label>Commessa</label><select id="nu-commessa"></select></div>
+    <div class="field">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="nu-auto-approva">
+        <span>Auto-approvazione richieste</span>
+      </label>
+      <div class="field-note">Le richieste di questo utente saranno approvate automaticamente</div>
+    </div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="chiudiModal('modal-utente')">Annulla</button>
       <button class="btn btn-primary" onclick="salvaUtente()">Crea utente</button>
@@ -462,6 +469,13 @@
     </div>
     <div class="field"><label>Stato</label>
       <select id="eu-attivo"><option value="true">Attivo</option><option value="false">Disabilitato</option></select>
+    </div>
+    <div class="field">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="eu-auto-approva">
+        <span>Auto-approvazione richieste</span>
+      </label>
+      <div class="field-note">Le richieste di questo utente saranno approvate automaticamente</div>
     </div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="chiudiModal('modal-utente-edit')">Annulla</button>
@@ -716,6 +730,7 @@ async function inviaRichiesta() {
 
   let creati = 0;
   let errori = 0;
+  let autoApprovata = false;
   for (const nomeCircuito of circuitiSelezionati) {
     const r = await api('creaRichiesta', {
       username:      user.username,
@@ -728,11 +743,14 @@ async function inviaRichiesta() {
       ora_fine_f2:   fasce[1] ? fasce[1].ora_fine   : '',
       motivo,
     });
-    if (r.ok) creati++; else errori++;
+    if (r.ok) { creati++; if (r.auto_approvata) autoApprovata = true; } else errori++;
   }
 
   if (creati > 0) {
-    toast(creati > 1 ? `${creati} richieste inviate` : 'Richiesta inviata');
+    const msg = autoApprovata
+      ? (creati > 1 ? `${creati} richieste approvate` : 'Richiesta approvata')
+      : (creati > 1 ? `${creati} richieste inviate`   : 'Richiesta inviata');
+    toast(msg);
     chiudiModal('modal-nuova-richiesta');
     mieRichieste = [];
     await caricaMieRichieste();
@@ -1133,12 +1151,15 @@ async function caricaUtenti() {
   const r  = await api('getUtenti');
   const el = document.getElementById('lista-utenti');
   if (!r.ok) { el.innerHTML = '<div class="empty">Errore</div>'; return; }
-  el.innerHTML = r.utenti.map(u => `<div class="richiesta-row">
+  el.innerHTML = r.utenti.map(u => {
+    const autoApprova = (u.auto_approva === true || u.auto_approva === 'TRUE');
+    return `<div class="richiesta-row">
     <div class="richiesta-top">
       <div>
         <div class="richiesta-titolo">${u.nome || u.username} <small style="color:var(--muted);font-weight:400">(${u.username})</small></div>
         <div class="richiesta-meta">${u.commessa_id || '—'} · PIN: ${u.pin || '—'}</div>
         ${u.impianti_ids ? `<div class="richiesta-meta" style="font-size:12px">Impianti: ${u.impianti_ids}</div>` : ''}
+        ${autoApprova ? '<div class="richiesta-meta" style="font-size:12px;color:var(--accent);font-weight:600">⚡ Auto-approvazione</div>' : ''}
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
         <span class="badge-role role-${u.ruolo}">${u.ruolo}</span>
@@ -1146,18 +1167,24 @@ async function caricaUtenti() {
         <button class="btn btn-ghost btn-sm" onclick='apriModificaUtente(${JSON.stringify(u).replace(/'/g,"&#39;")})'>Modifica</button>
       </div>
     </div>
-  </div>`).join('');
+  </div>`;
+  }).join('');
 }
 
-function apriModalUtente() { popolaSelectCommesse('nu-commessa'); document.getElementById('modal-utente').classList.add('open'); }
+function apriModalUtente() {
+  popolaSelectCommesse('nu-commessa');
+  document.getElementById('nu-auto-approva').checked = false;
+  document.getElementById('modal-utente').classList.add('open');
+}
 
 async function salvaUtente() {
   const r = await api('creaUtente', {
-    username: document.getElementById('nu-username').value.trim(),
-    pin:      document.getElementById('nu-pin').value.trim(),
-    ruolo:    document.getElementById('nu-ruolo').value,
-    nome:     document.getElementById('nu-nome').value.trim(),
-    commessa_id: document.getElementById('nu-commessa').value,
+    username:     document.getElementById('nu-username').value.trim(),
+    pin:          document.getElementById('nu-pin').value.trim(),
+    ruolo:        document.getElementById('nu-ruolo').value,
+    nome:         document.getElementById('nu-nome').value.trim(),
+    commessa_id:  document.getElementById('nu-commessa').value,
+    auto_approva: document.getElementById('nu-auto-approva').checked,
   });
   chiudiModal('modal-utente');
   if (r.ok) { toast('Utente creato'); caricaUtenti(); }
@@ -1171,17 +1198,19 @@ function apriModificaUtente(u) {
   document.getElementById('eu-pin').value      = u.pin || '';
   document.getElementById('eu-impianti').value = u.impianti_ids || '';
   document.getElementById('eu-attivo').value   = (u.attivo===true||u.attivo==='TRUE') ? 'true' : 'false';
+  document.getElementById('eu-auto-approva').checked = (u.auto_approva===true||u.auto_approva==='TRUE');
   document.getElementById('modal-utente-edit').classList.add('open');
 }
 
 async function salvaModificaUtente() {
   const r = await api('aggiornaUtente', {
-    username: document.getElementById('eu-username').value,
-    nome:     document.getElementById('eu-nome').value,
-    pin:      document.getElementById('eu-pin').value,
-    commessa_id: document.getElementById('eu-commessa').value,
+    username:     document.getElementById('eu-username').value,
+    nome:         document.getElementById('eu-nome').value,
+    pin:          document.getElementById('eu-pin').value,
+    commessa_id:  document.getElementById('eu-commessa').value,
     impianti_ids: document.getElementById('eu-impianti').value,
-    attivo: document.getElementById('eu-attivo').value === 'true',
+    attivo:       document.getElementById('eu-attivo').value === 'true',
+    auto_approva: document.getElementById('eu-auto-approva').checked,
   });
   chiudiModal('modal-utente-edit');
   if (r.ok) { toast('Utente aggiornato'); caricaUtenti(); }
