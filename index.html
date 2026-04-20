@@ -362,9 +362,13 @@
     <h3>Nuova richiesta accensione</h3>
     <div class="field">
       <label>Impianto</label>
-      <select id="sel-impianto">
+      <select id="sel-impianto" onchange="mostraCircuiti()">
         <option value="">Seleziona impianto…</option>
       </select>
+    </div>
+    <div id="circuiti-block" style="display:none;margin-bottom:14px">
+      <label style="display:block;font-size:13px;font-weight:500;margin-bottom:8px;color:var(--muted)">Seleziona uno o più circuiti</label>
+      <div id="circuiti-list" style="background:var(--bg);border-radius:8px;padding:10px;max-height:200px;overflow-y:auto"></div>
     </div>
     <div class="field">
       <label>Data accensione</label>
@@ -585,12 +589,24 @@ async function caricaImpianti_utente() {
   const r = await api('getMieiImpianti', { username: user.username });
   if (!r.ok) return;
   impiantiCache = r.impianti;
+
+  // Raggruppa per ID: se più impianti hanno stesso ID, nel dropdown appare una sola voce
+  const gruppi = {};
+  r.impianti.forEach(imp => {
+    if (!gruppi[imp.id]) gruppi[imp.id] = [];
+    gruppi[imp.id].push(imp);
+  });
+
   const sel = document.getElementById('sel-impianto');
   sel.innerHTML = '<option value="">Seleziona impianto…</option>';
-  r.impianti.forEach(imp => {
+  Object.entries(gruppi).forEach(([id, lista]) => {
     const opt = document.createElement('option');
-    opt.value = imp.id;
-    opt.textContent = `[${imp.id}] ${imp.nome}` + (imp.comune ? ` — ${imp.comune}` : '');
+    opt.value = id;
+    if (lista.length === 1) {
+      opt.textContent = `[${id}] ${lista[0].nome}` + (lista[0].comune ? ` — ${lista[0].comune}` : '');
+    } else {
+      opt.textContent = `[${id}] ${lista.length} circuiti` + (lista[0].comune ? ` — ${lista[0].comune}` : '');
+    }
     sel.appendChild(opt);
   });
 }
@@ -637,11 +653,35 @@ function rimuoviFascia2() {
   document.querySelector('button[onclick="aggiungiFascia()"]').style.display = '';
 }
 
+function mostraCircuiti() {
+  const id = document.getElementById('sel-impianto').value;
+  const block = document.getElementById('circuiti-block');
+  const list  = document.getElementById('circuiti-list');
+  list.innerHTML = '';
+  if (!id) { block.style.display = 'none'; return; }
+
+  const circuiti = impiantiCache.filter(imp => imp.id === id);
+  if (circuiti.length <= 1) { block.style.display = 'none'; return; }
+
+  block.style.display = 'block';
+  circuiti.forEach((imp, idx) => {
+    const row = document.createElement('label');
+    row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;font-size:14px';
+    row.innerHTML = `
+      <input type="checkbox" class="circ-check" value="${imp.nome.replace(/"/g,'&quot;')}" ${idx === 0 ? 'checked' : ''}>
+      <span>${imp.nome}</span>
+    `;
+    list.appendChild(row);
+  });
+}
+
 function apriModalNuovaRichiesta(dataPrecompilata) {
   resetFasce();
   document.getElementById('inp-data').value    = dataPrecompilata || '';
   document.getElementById('inp-motivo').value  = '';
   document.getElementById('sel-impianto').value = '';
+  document.getElementById('circuiti-block').style.display = 'none';
+  document.getElementById('circuiti-list').innerHTML = '';
   document.getElementById('modal-nuova-richiesta').classList.add('open');
 }
 
@@ -663,25 +703,43 @@ async function inviaRichiesta() {
 
   if (!fasce.length) { toast('Inserisci almeno una fascia oraria'); return; }
 
-  const r = await api('creaRichiesta', {
-    username:      user.username,
-    impianto_id,
-    data_accensione,
-    ora_inizio:    fasce[0].ora_inizio,
-    ora_fine:      fasce[0].ora_fine,
-    ora_inizio_f2: fasce[1] ? fasce[1].ora_inizio : '',
-    ora_fine_f2:   fasce[1] ? fasce[1].ora_fine   : '',
-    motivo,
-  });
+  // Determina i circuiti selezionati (se più di uno con stesso ID)
+  const circuiti = impiantiCache.filter(imp => imp.id === impianto_id);
+  let circuitiSelezionati;
+  if (circuiti.length === 1) {
+    circuitiSelezionati = [circuiti[0].nome];
+  } else {
+    const checked = document.querySelectorAll('.circ-check:checked');
+    if (!checked.length) { toast('Seleziona almeno un circuito'); return; }
+    circuitiSelezionati = Array.from(checked).map(c => c.value);
+  }
 
-  if (r.ok) {
-    toast('Richiesta inviata');
+  let creati = 0;
+  let errori = 0;
+  for (const nomeCircuito of circuitiSelezionati) {
+    const r = await api('creaRichiesta', {
+      username:      user.username,
+      impianto_id,
+      impianto_nome_forzato: nomeCircuito,
+      data_accensione,
+      ora_inizio:    fasce[0].ora_inizio,
+      ora_fine:      fasce[0].ora_fine,
+      ora_inizio_f2: fasce[1] ? fasce[1].ora_inizio : '',
+      ora_fine_f2:   fasce[1] ? fasce[1].ora_fine   : '',
+      motivo,
+    });
+    if (r.ok) creati++; else errori++;
+  }
+
+  if (creati > 0) {
+    toast(creati > 1 ? `${creati} richieste inviate` : 'Richiesta inviata');
     chiudiModal('modal-nuova-richiesta');
     mieRichieste = [];
     await caricaMieRichieste();
     disegnaCalendario();
-  } else {
-    toast('Errore: ' + r.error);
+  }
+  if (errori > 0) {
+    toast(`${errori} errori durante l'invio`);
   }
 }
 
