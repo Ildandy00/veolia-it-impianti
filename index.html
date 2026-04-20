@@ -80,6 +80,7 @@
   .stato-APPROVATA  { background: var(--green-l); color: var(--green); }
   .stato-MODIFICATA { background: var(--green-l); color: var(--green); }
   .stato-RIFIUTATA  { background: var(--red-l);   color: var(--red); }
+  .stato-GESTITA    { background: #e8e8e4; color: #555; }
 
   .richiesta-row { padding: 14px 16px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
   .richiesta-row:last-child { border-bottom: none; }
@@ -1209,7 +1210,7 @@ let richiesteApprSuper = [];
 async function caricaRichiesteApprSuper() {
   if (richiesteApprSuper.length) return;
   const r = await api('getAllRichieste');
-  richiesteApprSuper = r.ok ? r.richieste.filter(x => x.stato === 'APPROVATA' || x.stato === 'MODIFICATA') : [];
+  richiesteApprSuper = r.ok ? r.richieste.filter(x => x.stato === 'APPROVATA' || x.stato === 'MODIFICATA' || x.stato === 'GESTITA') : [];
 }
 
 async function disegnaCalendarioSuper() {
@@ -1296,8 +1297,12 @@ function renderCalSuper() {
         ev.style.borderLeft   = `3px solid ${c.border}`;
         ev.style.color        = c.text;
         ev.style.borderRadius = '0 4px 4px 0';
+        if (ric.stato === 'GESTITA') {
+          ev.style.opacity = '0.5';
+          ev.style.textDecoration = 'line-through';
+        }
         ev.textContent = ric.impianto_nome.substring(0, 13) + (ric.impianto_nome.length > 13 ? '…' : '');
-        ev.title = `${ric.impianto_nome} · ${ric.ora_inizio}–${ric.ora_fine} · ${ric.commessa_id}`;
+        ev.title = `${ric.impianto_nome} · ${ric.ora_inizio}–${ric.ora_fine} · ${ric.commessa_id}${ric.stato==='GESTITA'?' · GESTITA':''}`;
         ev.onclick = e => { e.stopPropagation(); mostraEventoSuperModal(ric); };
         cell.appendChild(ev);
       });
@@ -1328,8 +1333,10 @@ function mostraEventoSuperModal(ric) {
     ? `<div style="padding-left:10px;border-left:2px solid var(--border)">${ric.ora_inizio_f2}–${ric.ora_fine_f2}</div>`
     : '';
   const nome = ric.utente_nome || ric.utente;
+  const isGestita = ric.stato === 'GESTITA';
   document.getElementById('ev-body').innerHTML = `
     <div style="display:inline-block;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600;background:${c.bg};color:${c.text};border:1px solid ${c.border};margin-bottom:10px">${ric.commessa_id}</div>
+    ${isGestita ? '<div style="display:inline-block;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;background:#e8e8e4;color:#555;margin-left:6px">GESTITA</div>' : ''}
     <div style="font-family:monospace;font-size:12px;color:var(--muted);margin-bottom:8px">${ric.impianto_id}</div>
     <div><strong>Data:</strong> ${ric.data_accensione}</div>
     <div><strong>Orario:</strong> ${ric.ora_inizio} – ${ric.ora_fine}</div>
@@ -1337,8 +1344,25 @@ function mostraEventoSuperModal(ric) {
     ${ric.motivo ? `<div><strong>Motivo:</strong> ${ric.motivo}</div>` : ''}
     ${ric.note_coord ? `<div style="color:var(--amber);margin-top:6px"><strong>Note coord.:</strong> ${ric.note_coord}</div>` : ''}
     <div style="margin-top:6px;color:var(--muted);font-size:12px">Richiedente: ${nome} · Coord.: ${ric.coordinatore || '—'}</div>
+    <div style="margin-top:16px">
+      <button class="btn ${isGestita ? 'btn-ghost' : 'btn-primary'} btn-full" onclick="toggleGestita('${ric.id}', ${!isGestita})">
+        ${isGestita ? 'Riporta a "da gestire"' : 'Segna come gestita'}
+      </button>
+    </div>
   `;
   document.getElementById('modal-evento').classList.add('open');
+}
+
+async function toggleGestita(id, gestita) {
+  const r = await api('toggleGestita', { id, gestita });
+  if (r.ok) {
+    toast(gestita ? 'Gestita' : 'Riportata a da gestire');
+    chiudiModal('modal-evento');
+    richiesteApprSuper = [];
+    await disegnaCalendarioSuper();
+  } else {
+    toast('Errore: ' + r.error);
+  }
 }
 
 // ── HELPERS ───────────────────────────────────────────────────
@@ -1355,7 +1379,7 @@ async function popolaSelectCommesse(selectId, selected) {
 function chiudiModal(id) { document.getElementById(id).classList.remove('open'); }
 
 function labelStato(s) {
-  return { IN_ATTESA: 'In attesa', APPROVATA: 'Approvata', MODIFICATA: 'Approvata', RIFIUTATA: 'Rifiutata' }[s] || s;
+  return { IN_ATTESA: 'In attesa', APPROVATA: 'Approvata', MODIFICATA: 'Approvata', RIFIUTATA: 'Rifiutata', GESTITA: 'Gestita' }[s] || s;
 }
 
 let toastTimer;
