@@ -836,7 +836,7 @@ async function caricaStorico() {
   if (!mieRichieste.length) await caricaMieRichieste();
   const el    = document.getElementById('lista-storico');
   const lista = [...mieRichieste].reverse();
-  if (!lista.length) { el.innerHTML = '${emptyState('inbox','Nessuna richiesta','Crea la tua prima richiesta con il bottone +')}'; return; }
+  if (!lista.length) { el.innerHTML = emptyState('inbox','Nessuna richiesta','Crea la tua prima richiesta con il bottone +'); return; }
   el.innerHTML = lista.map(renderRigaStorico).join('');
 }
 
@@ -1093,7 +1093,7 @@ async function caricaRichiesteCoord(filtro) {
   const lista    = filtro === 'TUTTE' ? [...r.richieste].reverse() : attesa;
   const targetId = filtro === 'TUTTE' ? 'lista-coord-tutte' : 'lista-coord-attesa';
   const el       = document.getElementById(targetId);
-  if (!lista.length) { el.innerHTML = '${emptyState('inbox','Nessuna richiesta')}'; return; }
+  if (!lista.length) { el.innerHTML = emptyState('inbox','Nessuna richiesta'); return; }
   el.innerHTML = lista.map(renderRigaCoord).join('');
 }
 
@@ -1203,7 +1203,7 @@ function filtraRichieste(filtro, btn) {
 function renderSuperRichieste(filtro) {
   const el   = document.getElementById('lista-super-richieste');
   const list = filtro === 'TUTTE' ? tutteRichieste : tutteRichieste.filter(r => r.stato === filtro);
-  if (!list.length) { el.innerHTML = '${emptyState('inbox','Nessuna richiesta')}'; return; }
+  if (!list.length) { el.innerHTML = emptyState('inbox','Nessuna richiesta'); return; }
   el.innerHTML = list.map(ric => `<div class="richiesta-row">
     <div class="richiesta-top">
       <div>
@@ -1222,7 +1222,7 @@ function renderSuperRichieste(filtro) {
 async function caricaUtenti() {
   const r  = await api('getUtenti');
   const el = document.getElementById('lista-utenti');
-  if (!r.ok) { el.innerHTML = '${emptyState('inbox','Errore nel caricamento')}'; return; }
+  if (!r.ok) { el.innerHTML = emptyState('inbox','Errore nel caricamento'); return; }
   el.innerHTML = r.utenti.map(u => {
     const autoApprova = (u.auto_approva === true || u.auto_approva === 'TRUE');
     return `<div class="richiesta-row">
@@ -1294,7 +1294,7 @@ async function caricaCommesse() {
   const r  = await api('getCommesse');
   commesseCache = r.ok ? r.commesse : [];
   const el = document.getElementById('lista-commesse');
-  if (!commesseCache.length) { el.innerHTML = '${emptyState('folder','Nessuna commessa')}'; return; }
+  if (!commesseCache.length) { el.innerHTML = emptyState('folder','Nessuna commessa'); return; }
   el.innerHTML = commesseCache.map(c => `<div class="richiesta-row">
     <div class="richiesta-titolo">${c.nome}</div>
     <div class="richiesta-meta">${c.id} · ${c.comune}</div>
@@ -1321,7 +1321,7 @@ async function caricaImpianti() {
   const r  = await api('getImpianti');
   impiantiCache = r.ok ? r.impianti : [];
   const el = document.getElementById('lista-impianti');
-  if (!impiantiCache.length) { el.innerHTML = '${emptyState('building','Nessun impianto')}'; return; }
+  if (!impiantiCache.length) { el.innerHTML = emptyState('building','Nessun impianto'); return; }
   el.innerHTML = impiantiCache.map(i => `<div class="richiesta-row">
     <div class="richiesta-titolo">${i.nome}</div>
     <div class="richiesta-meta">${i.indirizzo} · ${i.comune}</div>
