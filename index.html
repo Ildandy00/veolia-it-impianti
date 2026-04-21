@@ -619,7 +619,8 @@ async function caricaImpianti_utente() {
     if (lista.length === 1) {
       opt.textContent = `[${id}] ${lista[0].nome}` + (lista[0].comune ? ` — ${lista[0].comune}` : '');
     } else {
-      opt.textContent = `[${id}] ${lista.length} circuiti` + (lista[0].comune ? ` — ${lista[0].comune}` : '');
+      const nomeGruppo = lista[0].nome_gruppo || `${lista.length} circuiti`;
+      opt.textContent = `[${id}] ${nomeGruppo}` + (lista[0].comune ? ` — ${lista[0].comune}` : '');
     }
     sel.appendChild(opt);
   });
