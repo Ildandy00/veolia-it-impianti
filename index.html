@@ -766,6 +766,8 @@ function apriModalNuovaRichiesta(dataPrecompilata) {
   document.getElementById('sel-impianto').value = '';
   document.getElementById('circuiti-block').style.display = 'none';
   document.getElementById('circuiti-list').innerHTML = '';
+  const btnAggiungi = document.querySelector('button[onclick="aggiungiFascia()"]');
+  if (btnAggiungi) btnAggiungi.style.display = '';
   document.getElementById('modal-nuova-richiesta').classList.add('open');
 }
 
